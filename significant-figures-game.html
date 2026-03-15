@@ -1,0 +1,1541 @@
+<!DOCTYPE html>
+<html lang="ja">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+<title>有効数字マスター｜高校化学</title>
+<style>
+@import url('https://fonts.googleapis.com/css2?family=Kaisei+Decol:wght@400;700&family=DotGothic16&family=Noto+Sans+JP:wght@400;500;700;900&display=swap');
+
+:root {
+  --bg: #f5f0e8;
+  --bg2: #ede7d9;
+  --surface: #ffffff;
+  --surface2: #faf7f2;
+  --ink: #1a1410;
+  --ink2: #4a3f35;
+  --ink3: #8a7a6e;
+  --red: #c0392b;
+  --red-l: #f8e8e6;
+  --blue: #1a5276;
+  --blue-l: #e8f0f8;
+  --green: #1e6b3a;
+  --green-l: #e8f5ee;
+  --gold: #b7860b;
+  --gold-l: #fdf6e0;
+  --border: #d4c9b8;
+  --border2: #b8a898;
+  --shadow: rgba(26,20,16,0.12);
+}
+
+*{margin:0;padding:0;box-sizing:border-box;}
+
+body{
+  font-family:'Noto Sans JP',sans-serif;
+  background:var(--bg);
+  color:var(--ink);
+  min-height:100vh;
+  overflow-x:hidden;
+}
+
+/* 和紙テクスチャ風背景 */
+body::before{
+  content:'';
+  position:fixed;inset:0;
+  background-image:
+    url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='200' height='200'%3E%3Cfilter id='n'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.9' numOctaves='4' stitchTiles='stitch'/%3E%3CfeColorMatrix type='saturate' values='0'/%3E%3C/filter%3E%3Crect width='200' height='200' filter='url(%23n)' opacity='0.04'/%3E%3C/svg%3E");
+  pointer-events:none;z-index:0;
+}
+
+.wrap{
+  max-width:680px;
+  margin:0 auto;
+  padding:16px;
+  position:relative;
+  z-index:1;
+}
+
+/* ===== SCREENS ===== */
+.screen{display:none;}
+.screen.active{display:block;animation:fadeUp .35s ease;}
+@keyframes fadeUp{from{opacity:0;transform:translateY(18px);}to{opacity:1;transform:translateY(0);}}
+
+/* ===== HEADER LOGO ===== */
+.top-bar{
+  display:flex;align-items:center;gap:12px;
+  padding:20px 0 16px;
+  border-bottom:2px solid var(--ink);
+  margin-bottom:20px;
+}
+.logo-mark{
+  width:48px;height:48px;
+  background:var(--ink);
+  border-radius:8px;
+  display:flex;align-items:center;justify-content:center;
+  font-family:'DotGothic16',monospace;
+  font-size:1.1rem;
+  color:var(--bg);
+  flex-shrink:0;
+  letter-spacing:-1px;
+}
+.logo-text{flex:1;}
+.logo-text h1{
+  font-family:'Kaisei Decol',serif;
+  font-size:clamp(1.2rem,4.5vw,1.6rem);
+  font-weight:700;
+  line-height:1.1;
+  color:var(--ink);
+}
+.logo-text p{
+  font-size:0.72rem;
+  color:var(--ink3);
+  margin-top:2px;
+  letter-spacing:2px;
+  text-transform:uppercase;
+}
+
+/* ===== CARDS ===== */
+.card{
+  background:var(--surface);
+  border:1.5px solid var(--border);
+  border-radius:12px;
+  padding:20px;
+  margin-bottom:14px;
+  box-shadow:0 2px 8px var(--shadow);
+  position:relative;
+}
+.card-title{
+  font-size:1rem;
+  font-weight:700;
+  color:var(--ink);
+  margin-bottom:14px;
+  display:flex;align-items:center;gap:8px;
+}
+.card-title .dot{
+  width:8px;height:8px;
+  background:var(--red);
+  border-radius:50%;
+  flex-shrink:0;
+}
+
+/* ===== BUTTONS ===== */
+.btn{
+  display:block;width:100%;
+  padding:15px 20px;
+  border:1.5px solid var(--ink);
+  border-radius:8px;
+  font-family:'Noto Sans JP',sans-serif;
+  font-size:0.95rem;
+  font-weight:700;
+  cursor:pointer;
+  transition:all .15s;
+  text-align:center;
+  letter-spacing:.5px;
+  background:var(--ink);
+  color:var(--bg);
+}
+.btn:hover,.btn:active{
+  background:var(--ink2);
+  border-color:var(--ink2);
+  transform:translateY(-1px);
+  box-shadow:0 4px 12px var(--shadow);
+}
+.btn-outline{
+  background:transparent;
+  color:var(--ink);
+}
+.btn-outline:hover,.btn-outline:active{
+  background:var(--bg2);
+  color:var(--ink);
+}
+.btn-red{background:var(--red);border-color:var(--red);}
+.btn-red:hover{background:#a93226;border-color:#a93226;}
+.btn+.btn{margin-top:10px;}
+.btn:disabled{opacity:.4;cursor:not-allowed;transform:none;}
+
+/* ===== NAME INPUT ===== */
+.input-wrap{margin:14px 0;}
+.input-wrap label{
+  font-size:0.82rem;
+  font-weight:700;
+  color:var(--ink2);
+  display:block;
+  margin-bottom:6px;
+  letter-spacing:.5px;
+}
+.text-input{
+  width:100%;
+  padding:12px 14px;
+  border:1.5px solid var(--border2);
+  border-radius:8px;
+  font-family:'Noto Sans JP',sans-serif;
+  font-size:1rem;
+  color:var(--ink);
+  background:var(--surface2);
+  outline:none;
+  transition:border-color .2s;
+}
+.text-input:focus{border-color:var(--blue);}
+
+/* ===== LEVEL GRID ===== */
+.level-grid{
+  display:grid;
+  grid-template-columns:repeat(3,1fr);
+  gap:8px;
+  margin:14px 0;
+}
+.lv-btn{
+  padding:12px 6px;
+  border:1.5px solid var(--border);
+  border-radius:8px;
+  background:var(--surface2);
+  font-family:'Noto Sans JP',sans-serif;
+  font-size:0.78rem;
+  font-weight:700;
+  cursor:pointer;
+  transition:all .15s;
+  text-align:center;
+  color:var(--ink);
+}
+.lv-btn:hover,.lv-btn.sel{
+  border-color:var(--blue);
+  background:var(--blue-l);
+  color:var(--blue);
+}
+.lv-btn .lv-name{
+  font-size:1.05rem;
+  display:block;
+  margin-bottom:2px;
+}
+.lv-btn .lv-diff{
+  font-size:0.65rem;
+  color:var(--ink3);
+  display:block;
+}
+.lv-btn.sel .lv-diff{color:var(--blue);}
+
+.lv-desc{
+  background:var(--blue-l);
+  border:1px solid #b8cfe8;
+  border-radius:8px;
+  padding:12px 14px;
+  font-size:0.82rem;
+  color:var(--blue);
+  line-height:1.6;
+  display:none;
+  margin-bottom:10px;
+}
+
+/* ===== LESSON ===== */
+.tabs{
+  display:flex;gap:4px;
+  background:var(--bg2);
+  border-radius:8px;
+  padding:4px;
+  margin-bottom:14px;
+}
+.tab-btn{
+  flex:1;padding:9px 6px;
+  border:none;border-radius:6px;
+  background:transparent;
+  font-family:'Noto Sans JP',sans-serif;
+  font-size:0.78rem;font-weight:700;
+  cursor:pointer;
+  color:var(--ink3);
+  transition:all .15s;
+}
+.tab-btn.active{
+  background:var(--surface);
+  color:var(--blue);
+  box-shadow:0 1px 4px var(--shadow);
+  border:1px solid var(--border);
+}
+.tab-page{display:none;}
+.tab-page.active{display:block;animation:fadeUp .25s;}
+
+.lesson-h{
+  font-size:0.95rem;font-weight:900;
+  color:var(--blue);
+  margin:0 0 10px;
+  padding-left:10px;
+  border-left:3px solid var(--blue);
+}
+.lesson-p{
+  font-size:0.85rem;
+  line-height:1.8;
+  color:var(--ink2);
+  margin-bottom:12px;
+}
+.box{
+  background:var(--surface2);
+  border:1px solid var(--border);
+  border-left:3px solid var(--red);
+  border-radius:0 8px 8px 0;
+  padding:10px 14px;
+  margin:8px 0;
+  font-size:0.83rem;
+  line-height:1.7;
+}
+.box.blue{border-left-color:var(--blue);}
+.box.green{border-left-color:var(--green);}
+.hl{color:var(--red);font-weight:700;}
+.hl-b{color:var(--blue);font-weight:700;}
+.hl-g{color:var(--green);font-weight:700;}
+
+.rule-list{list-style:none;}
+.rule-list li{
+  display:flex;align-items:flex-start;gap:8px;
+  padding:7px 0;
+  border-bottom:1px solid var(--bg2);
+  font-size:0.83rem;line-height:1.6;
+}
+.rule-list li:last-child{border-bottom:none;}
+.rn{
+  min-width:22px;height:22px;
+  background:var(--blue);color:white;
+  border-radius:50%;
+  font-size:0.7rem;font-weight:700;
+  display:flex;align-items:center;justify-content:center;
+  flex-shrink:0;margin-top:1px;
+}
+
+.ex-table{width:100%;border-collapse:collapse;font-size:0.8rem;margin:8px 0;}
+.ex-table th{
+  background:var(--blue);color:white;
+  padding:7px 10px;text-align:center;font-weight:700;
+}
+.ex-table td{
+  padding:7px 10px;text-align:center;
+  border-bottom:1px solid var(--bg2);
+  font-family:'DotGothic16',monospace;
+}
+.ex-table tr:last-child td{border-bottom:none;}
+.ex-table tr:nth-child(even) td{background:var(--surface2);}
+
+/* ===== QUIZ ===== */
+.quiz-header{
+  display:flex;align-items:center;justify-content:space-between;
+  margin-bottom:10px;
+}
+.q-progress{
+  font-family:'DotGothic16',monospace;
+  font-size:0.82rem;color:var(--ink2);
+}
+.q-score{
+  background:var(--gold-l);
+  border:1.5px solid var(--gold);
+  border-radius:20px;
+  padding:4px 14px;
+  font-family:'DotGothic16',monospace;
+  font-size:0.88rem;
+  color:var(--gold);
+  font-weight:700;
+}
+.prog-bar{
+  height:5px;
+  background:var(--bg2);
+  border-radius:3px;
+  margin-bottom:6px;
+  overflow:hidden;
+}
+.prog-fill{
+  height:100%;
+  background:linear-gradient(90deg,var(--blue),var(--green));
+  border-radius:3px;
+  transition:width .5s ease;
+}
+.timer-bar{
+  height:3px;
+  background:var(--bg2);
+  border-radius:3px;
+  margin-bottom:18px;
+  overflow:hidden;
+}
+.timer-fill{
+  height:100%;
+  background:var(--red);
+  border-radius:3px;
+  transition:width .1s linear;
+}
+.q-type{
+  font-size:0.7rem;
+  font-weight:700;
+  color:var(--red);
+  letter-spacing:2px;
+  text-transform:uppercase;
+  margin-bottom:6px;
+  font-family:'DotGothic16',monospace;
+}
+.q-text{
+  font-size:clamp(0.9rem,3vw,1.05rem);
+  font-weight:700;
+  line-height:1.7;
+  color:var(--ink);
+  margin-bottom:14px;
+}
+.q-formula{
+  font-family:'DotGothic16',monospace;
+  font-size:clamp(1.1rem,4vw,1.35rem);
+  color:var(--blue);
+  text-align:center;
+  padding:14px;
+  background:var(--blue-l);
+  border:1.5px solid #b8cfe8;
+  border-radius:10px;
+  margin-bottom:16px;
+  letter-spacing:2px;
+}
+.choices{
+  display:grid;
+  grid-template-columns:1fr 1fr;
+  gap:9px;
+  margin-bottom:14px;
+}
+.choice{
+  padding:14px 10px;
+  border:1.5px solid var(--border);
+  border-radius:8px;
+  background:var(--surface2);
+  font-family:'DotGothic16',monospace;
+  font-size:clamp(0.82rem,3vw,0.96rem);
+  cursor:pointer;
+  transition:all .15s;
+  text-align:center;
+  font-weight:700;
+  color:var(--ink);
+}
+.choice:hover:not(:disabled){
+  border-color:var(--blue);
+  background:var(--blue-l);
+  color:var(--blue);
+  transform:scale(1.02);
+}
+.choice.ok{
+  border-color:var(--green);
+  background:var(--green-l);
+  color:var(--green);
+}
+.choice.ng{
+  border-color:var(--red);
+  background:var(--red-l);
+  color:var(--red);
+}
+.choice:disabled{cursor:default;}
+
+.feedback{
+  padding:12px 14px;
+  border-radius:8px;
+  font-size:0.85rem;
+  line-height:1.6;
+  margin-bottom:14px;
+  display:none;
+}
+.feedback.ok{
+  background:var(--green-l);
+  border:1px solid var(--green);
+  color:var(--green);
+  display:block;animation:fadeUp .25s;
+}
+.feedback.ng{
+  background:var(--red-l);
+  border:1px solid var(--red);
+  color:var(--red);
+  display:block;animation:fadeUp .25s;
+}
+
+.combo-tag{
+  display:inline-block;
+  background:var(--red);
+  color:white;
+  font-family:'DotGothic16',monospace;
+  font-size:0.72rem;
+  padding:2px 8px;
+  border-radius:4px;
+  margin-left:8px;
+}
+
+/* ===== RESULT ===== */
+.result-circle{
+  width:130px;height:130px;
+  border-radius:50%;
+  border:3px solid var(--ink);
+  display:flex;flex-direction:column;
+  align-items:center;justify-content:center;
+  margin:16px auto;
+  background:var(--gold-l);
+  box-shadow:0 4px 20px var(--shadow);
+}
+.result-num{
+  font-family:'Kaisei Decol',serif;
+  font-size:2.6rem;
+  font-weight:700;
+  color:var(--gold);
+  line-height:1;
+}
+.result-max{font-size:0.75rem;color:var(--ink3);}
+.grade-txt{
+  text-align:center;
+  font-family:'Kaisei Decol',serif;
+  font-size:1.4rem;
+  font-weight:700;
+  margin-bottom:6px;
+}
+.grade-s{color:var(--gold);}
+.grade-a{color:var(--blue);}
+.grade-b{color:var(--green);}
+.grade-c{color:var(--ink3);}
+
+/* ===== RANKING ===== */
+.rank-filter{
+  display:flex;gap:6px;
+  margin-bottom:14px;
+}
+.rfilter-btn{
+  flex:1;padding:8px 4px;
+  border:1.5px solid var(--border);
+  border-radius:6px;
+  background:var(--surface2);
+  font-family:'Noto Sans JP',sans-serif;
+  font-size:0.78rem;font-weight:700;
+  cursor:pointer;
+  color:var(--ink2);
+  transition:all .15s;
+}
+.rfilter-btn.active{
+  background:var(--ink);
+  border-color:var(--ink);
+  color:var(--bg);
+}
+
+.rank-list{list-style:none;}
+.rank-item{
+  display:flex;align-items:center;
+  padding:11px 14px;
+  border-radius:8px;
+  margin-bottom:7px;
+  background:var(--surface2);
+  border:1px solid var(--border);
+  transition:all .2s;
+}
+.rank-item.mine{
+  background:var(--blue-l);
+  border-color:#b8cfe8;
+}
+.rank-item.top1{background:var(--gold-l);border-color:#e0c860;}
+.rank-item.top2{background:#f5f5f5;border-color:#c8c8c8;}
+.rank-item.top3{background:#fdf3ec;border-color:#d4a87c;}
+.rank-item.new-in{animation:newIn .5s ease;}
+@keyframes newIn{
+  0%{transform:scale(1.04);box-shadow:0 0 16px rgba(26,82,118,.25);}
+  100%{transform:scale(1);box-shadow:none;}
+}
+.rank-pos{
+  width:28px;text-align:center;
+  font-family:'DotGothic16',monospace;
+  font-size:0.9rem;color:var(--ink3);
+  flex-shrink:0;
+}
+.rank-pos.p1{font-size:1.2rem;}
+.rank-name{
+  flex:1;font-size:0.9rem;font-weight:700;
+  margin:0 10px;
+  overflow:hidden;text-overflow:ellipsis;white-space:nowrap;
+}
+.rank-right{text-align:right;flex-shrink:0;}
+.rank-score{
+  font-family:'DotGothic16',monospace;
+  font-size:1rem;font-weight:700;
+  color:var(--blue);
+}
+.rank-score.gold{color:var(--gold);}
+.rank-meta{
+  font-size:0.65rem;color:var(--ink3);
+  margin-top:2px;
+}
+.lv-tag{
+  display:inline-block;
+  font-size:0.65rem;
+  padding:2px 6px;
+  border-radius:4px;
+  background:var(--blue-l);
+  color:var(--blue);
+  border:1px solid #b8cfe8;
+  margin-left:4px;
+}
+
+/* 自分の記録カード */
+.my-record-card{
+  background:var(--blue-l);
+  border:1.5px solid #b8cfe8;
+  border-radius:10px;
+  padding:14px 16px;
+  margin-bottom:14px;
+}
+.my-record-title{
+  font-size:0.78rem;font-weight:700;
+  color:var(--blue);
+  margin-bottom:8px;
+  letter-spacing:1px;
+}
+.my-record-list{list-style:none;}
+.my-record-list li{
+  display:flex;align-items:center;justify-content:space-between;
+  padding:6px 0;
+  border-bottom:1px solid rgba(26,82,118,.1);
+  font-size:0.82rem;
+}
+.my-record-list li:last-child{border-bottom:none;}
+.my-rank-pos{
+  font-family:'DotGothic16',monospace;
+  font-weight:700;
+  color:var(--blue);
+}
+
+/* ===== WELCOME / TITLE ===== */
+.hero{text-align:center;padding:24px 0 16px;}
+.hero-icon{font-size:3.5rem;display:block;margin-bottom:8px;}
+.hero-title{
+  font-family:'Kaisei Decol',serif;
+  font-size:clamp(1.5rem,5vw,2rem);
+  font-weight:700;
+  line-height:1.2;
+  color:var(--ink);
+  margin-bottom:8px;
+}
+.hero-title span{color:var(--blue);}
+.hero-sub{
+  font-size:0.83rem;
+  color:var(--ink2);
+  line-height:1.7;
+  margin-bottom:18px;
+}
+.chip-row{
+  display:flex;flex-wrap:wrap;gap:6px;justify-content:center;
+  margin-bottom:20px;
+}
+.chip{
+  padding:5px 12px;
+  border-radius:20px;
+  font-size:0.73rem;
+  background:var(--surface);
+  border:1px solid var(--border);
+  color:var(--ink2);
+}
+
+/* ===== MISC ===== */
+.sep{border:none;border-top:1px solid var(--border);margin:14px 0;}
+.small{font-size:0.8rem;color:var(--ink3);line-height:1.6;}
+.text-center{text-align:center;}
+
+/* empty ranking */
+.empty-rank{
+  text-align:center;
+  padding:30px 20px;
+  color:var(--ink3);
+  font-size:0.85rem;
+}
+
+@media(max-width:400px){
+  .choices{grid-template-columns:1fr;}
+  .level-grid{grid-template-columns:repeat(2,1fr);}
+}
+</style>
+</head>
+<body>
+<div class="wrap">
+
+<!-- ===== TITLE ===== -->
+<div id="sc-title" class="screen active">
+  <div class="top-bar">
+    <div class="logo-mark">有効<br>数字</div>
+    <div class="logo-text">
+      <h1>有効数字マスター</h1>
+      <p>高校化学 Significant Figures</p>
+    </div>
+  </div>
+  <div class="card">
+    <div class="hero">
+      <span class="hero-icon">⚗️</span>
+      <div class="hero-title">有効数字を<br><span>完全マスター</span>しよう</div>
+      <p class="hero-sub">
+        10級〜5段まで全15ステージ。<br>
+        解説でしっかり基礎を固めてから<br>
+        問題に挑戦しよう！
+      </p>
+      <div class="chip-row">
+        <span class="chip">📚 わかりやすい解説</span>
+        <span class="chip">🧮 たっぷり問題</span>
+        <span class="chip">🏆 全体ランキング上位20位</span>
+        <span class="chip">👤 自分の記録はいつでも確認</span>
+        <span class="chip">📱 スマホ対応</span>
+      </div>
+    </div>
+    <button class="btn btn-red" onclick="showScreen('sc-name')">🚀 スタート</button>
+    <button class="btn btn-outline" style="margin-top:10px" onclick="showScreen('sc-ranking')">🏆 ランキングを見る</button>
+  </div>
+</div>
+
+<!-- ===== NAME INPUT ===== -->
+<div id="sc-name" class="screen">
+  <div class="top-bar">
+    <div class="logo-mark">有効<br>数字</div>
+    <div class="logo-text"><h1>プロフィール設定</h1><p>名前を入力してください</p></div>
+  </div>
+  <div class="card">
+    <div class="card-title"><div class="dot"></div>あなたの名前</div>
+    <p class="small" style="margin-bottom:14px;">入力した名前でランキングに登録されます。</p>
+    <div class="input-wrap">
+      <label>ニックネーム（最大8文字）</label>
+      <input type="text" class="text-input" id="inp-name" placeholder="例：化学太郎" maxlength="8">
+    </div>
+    <button class="btn" onclick="saveName()">決定してレベルを選ぶ →</button>
+    <button class="btn btn-outline" onclick="showScreen('sc-title')" style="margin-top:10px;">← 戻る</button>
+  </div>
+</div>
+
+<!-- ===== LEVEL SELECT ===== -->
+<div id="sc-level" class="screen">
+  <div class="top-bar">
+    <div class="logo-mark">有効<br>数字</div>
+    <div class="logo-text">
+      <h1>レベル選択</h1>
+      <p id="lv-player-name" style="font-size:0.78rem;color:#666;margin-top:2px;"></p>
+    </div>
+  </div>
+  <div class="card">
+    <div class="card-title"><div class="dot"></div>レベルを選択してください</div>
+    <p class="small" style="margin-bottom:12px;">初めての方は <strong>10級</strong> から。段に進むほど難しくなります。</p>
+    <div class="level-grid" id="lv-grid"></div>
+    <div class="lv-desc" id="lv-desc"></div>
+    <button class="btn" id="lv-start-btn" onclick="goLesson()" disabled>📖 解説を読んで挑戦！</button>
+    <button class="btn btn-outline" onclick="showScreen('sc-ranking')" style="margin-top:10px;">🏆 ランキングを見る</button>
+  </div>
+</div>
+
+<!-- ===== LESSON ===== -->
+<div id="sc-lesson" class="screen">
+  <div class="top-bar">
+    <div class="logo-mark">解説</div>
+    <div class="logo-text">
+      <h1 id="lesson-title">有効数字とは</h1>
+      <p id="lesson-lv-label"></p>
+    </div>
+  </div>
+
+  <div class="tabs">
+    <button class="tab-btn active" id="tab1" onclick="switchTab(1)">基礎知識</button>
+    <button class="tab-btn" id="tab2" onclick="switchTab(2)">計算ルール</button>
+    <button class="tab-btn" id="tab3" onclick="switchTab(3)">例題確認</button>
+  </div>
+
+  <!-- PAGE 1 -->
+  <div class="tab-page active" id="tp1">
+    <div class="card">
+      <div class="lesson-h">① 有効数字とは何か？</div>
+      <p class="lesson-p">測定値を表すとき、<span class="hl">意味のある（信頼できる）桁数</span>のことを有効数字といいます。測定には必ず誤差が伴うため、「どこまで正確に測れたか」を示す必要があります。</p>
+      <div class="box">
+        📏 定規で <span class="hl-b">2.35 cm</span> と読めたとき<br>
+        「2.3」→ 目盛りで確実に読める<br>
+        「5」→ 目盛りの間を目測した推定値<br>
+        → <span class="hl">有効数字 3桁</span>
+      </div>
+
+      <div class="lesson-h" style="margin-top:16px;">② 有効数字の桁数の数え方（基本ルール）</div>
+      <ul class="rule-list">
+        <li><span class="rn">1</span><span><span class="hl">0以外の数字</span>はすべて有効数字<br><small style="color:#888;">例：3.14 → 3桁、52.7 → 3桁</small></span></li>
+        <li><span class="rn">2</span><span>数字と数字の<span class="hl">間にある0</span>は有効数字<br><small style="color:#888;">例：1.05 → 3桁、1006 → 4桁</small></span></li>
+        <li><span class="rn">3</span><span>小数点以下の<span class="hl">末尾の0</span>は有効数字<br><small style="color:#888;">例：1.500 → 4桁、0.720 → 3桁</small></span></li>
+        <li><span class="rn">4</span><span>整数の<span class="hl-b">末尾の0</span>は有効数字かどうか曖昧<br><small style="color:#888;">例：1500 → 2桁〜4桁（不明）</small></span></li>
+        <li><span class="rn">5</span><span>数の<span class="hl-b">先頭の0</span>は有効数字ではない<br><small style="color:#888;">例：0.0025 → 2桁、0.030 → 2桁</small></span></li>
+      </ul>
+    </div>
+    <div class="card">
+      <div class="lesson-h">③ 科学的記数法（指数表示）</div>
+      <p class="lesson-p">非常に大きい数・小さい数は <span class="hl-b">a × 10<sup>n</sup></span>（1 ≦ a ＜ 10）の形で表します。有効数字の桁数が一目でわかります。</p>
+      <div class="box blue">
+        <span class="hl-b">0.000456</span> = <span class="hl-g">4.56 × 10⁻⁴</span>（3桁）<br>
+        <span class="hl-b">123000</span> = <span class="hl-g">1.23 × 10⁵</span>（3桁と明示する場合）<br>
+        <span class="hl-b">6.022 × 10²³</span> → 4桁（aの部分が有効数字）
+      </div>
+    </div>
+    <div class="card">
+      <button class="btn" onclick="switchTab(2)">次：計算ルールへ →</button>
+    </div>
+  </div>
+
+  <!-- PAGE 2 -->
+  <div class="tab-page" id="tp2">
+    <div class="card">
+      <div class="lesson-h">① 掛け算・割り算のルール</div>
+      <p class="lesson-p">答えの有効数字の桁数は、<span class="hl">計算した数のうち最も桁数が少ないもの</span>に合わせます。</p>
+      <div class="box">
+        <span class="hl-b">2.5</span>（2桁）× <span class="hl-b">3.42</span>（3桁）= 8.55<br>
+        → 最小桁数は <span class="hl">2桁</span> → 答えは <span class="hl-g">8.6</span>
+      </div>
+      <div class="box">
+        <span class="hl-b">12.0</span>（3桁）÷ <span class="hl-b">4.0</span>（2桁）= 3.0<br>
+        → 最小桁数は <span class="hl">2桁</span> → 答えは <span class="hl-g">3.0</span>
+      </div>
+      <div class="box">
+        <span class="hl-b">6.0</span>（2桁）÷ <span class="hl-b">3.0</span>（2桁）= 2.0<br>
+        → 最小桁数は <span class="hl">2桁</span> → 答えは <span class="hl-g">2.0</span>（「2」だと1桁になりNG！）
+      </div>
+    </div>
+    <div class="card">
+      <div class="lesson-h">② 足し算・引き算のルール</div>
+      <p class="lesson-p">答えの<span class="hl">小数点以下の桁数</span>は、計算した数のうち最も小数点以下の桁数が少ないものに合わせます。</p>
+      <div class="box">
+        <span class="hl-b">12.52</span>（小数2桁）+ <span class="hl-b">1.7</span>（小数1桁）= 14.22<br>
+        → 小数の最少は <span class="hl">1桁</span> → 答えは <span class="hl-g">14.2</span>
+      </div>
+      <div class="box">
+        <span class="hl-b">100.0</span>（小数1桁）− <span class="hl-b">2.51</span>（小数2桁）= 97.49<br>
+        → 小数の最少は <span class="hl">1桁</span> → 答えは <span class="hl-g">97.5</span>
+      </div>
+    </div>
+    <div class="card">
+      <div class="lesson-h">③ 四捨五入の注意点</div>
+      <p class="lesson-p">桁を丸めるときは四捨五入を使います。「5」のとき切り上げる点に注意！</p>
+      <div class="box green">
+        8.350... → 小数1桁に → <span class="hl-g">8.4</span>（5は切り上げ）<br>
+        8.349... → 小数1桁に → <span class="hl-g">8.3</span>（4は切り捨て）
+      </div>
+    </div>
+    <div class="card">
+      <button class="btn" onclick="switchTab(3)">次：例題確認へ →</button>
+      <button class="btn btn-outline" onclick="switchTab(1)" style="margin-top:8px;">← 基礎知識に戻る</button>
+    </div>
+  </div>
+
+  <!-- PAGE 3 -->
+  <div class="tab-page" id="tp3">
+    <div class="card">
+      <div class="lesson-h">有効数字の桁数 確認表</div>
+      <table class="ex-table">
+        <tr><th>数値</th><th>有効数字の桁</th><th>桁数</th></tr>
+        <tr><td>3.14</td><td>3, 1, 4</td><td>3桁</td></tr>
+        <tr><td>0.0720</td><td>7, 2, 0</td><td>3桁</td></tr>
+        <tr><td>1006</td><td>1, 0, 0, 6</td><td>4桁</td></tr>
+        <tr><td>0.030</td><td>3, 0</td><td>2桁</td></tr>
+        <tr><td>5.00 × 10²</td><td>5, 0, 0</td><td>3桁</td></tr>
+        <tr><td>100.</td><td>1, 0, 0</td><td>3桁</td></tr>
+        <tr><td>0.0025</td><td>2, 5</td><td>2桁</td></tr>
+        <tr><td>2.400</td><td>2, 4, 0, 0</td><td>4桁</td></tr>
+      </table>
+    </div>
+    <div class="card">
+      <div class="lesson-h">計算例題</div>
+      <div class="box">
+        <strong>問1.</strong> 2.4 × 3.75 = ?<br>
+        2.4（<span class="hl">2桁</span>）× 3.75（3桁）= 8.9ではなく...<br>
+        実際の計算：8.4×1... 2.4×3.75 = 9.0<br>
+        <span class="hl-g">答：9.0（2桁）</span>
+      </div>
+      <div class="box">
+        <strong>問2.</strong> 8.56 − 1.3 = ?<br>
+        8.56（小数2桁）− 1.3（<span class="hl">小数1桁</span>）= 7.26<br>
+        小数1桁に丸める → <span class="hl-g">答：7.3</span>
+      </div>
+      <div class="box">
+        <strong>問3.</strong> 0.0720 の有効数字は何桁？<br>
+        先頭の0は無効 → 7, 2, 0 の3桁<br>
+        末尾の0は小数なので有効 → <span class="hl-g">答：3桁</span>
+      </div>
+    </div>
+    <div class="card">
+      <button class="btn btn-red" onclick="startQuiz()">✅ 理解できた！問題に挑戦！</button>
+      <button class="btn btn-outline" onclick="showScreen('sc-level')" style="margin-top:10px;">← レベル選択に戻る</button>
+    </div>
+  </div>
+</div>
+
+<!-- ===== QUIZ ===== -->
+<div id="sc-quiz" class="screen">
+  <div class="quiz-header">
+    <div class="q-progress">問題 <span id="qn">1</span> / <span id="qtot">10</span><span id="combo-tag"></span></div>
+    <div class="q-score">Score: <span id="qscore">0</span></div>
+  </div>
+  <div class="prog-bar"><div class="prog-fill" id="prog-fill" style="width:0%"></div></div>
+  <div class="timer-bar"><div class="timer-fill" id="timer-fill" style="width:100%"></div></div>
+  <div class="card">
+    <div class="q-type" id="qtype"></div>
+    <div class="q-text" id="qtext"></div>
+    <div class="q-formula" id="qformula"></div>
+    <div class="choices" id="qchoices"></div>
+    <div class="feedback" id="qfeedback"></div>
+    <button class="btn" id="next-btn" onclick="nextQ()" style="display:none;">次の問題へ →</button>
+  </div>
+</div>
+
+<!-- ===== RESULT ===== -->
+<div id="sc-result" class="screen">
+  <div class="top-bar">
+    <div class="logo-mark">結果</div>
+    <div class="logo-text"><h1>結果発表</h1><p id="result-lv-label"></p></div>
+  </div>
+  <div class="card text-center">
+    <div class="grade-txt" id="grade-txt"></div>
+    <div class="result-circle">
+      <div class="result-num" id="res-score">0</div>
+      <div class="result-max">/ <span id="res-max">1000</span></div>
+    </div>
+    <p id="res-comment" class="small" style="margin:8px 0;"></p>
+    <p id="res-correct" style="font-family:'DotGothic16',monospace;font-size:0.85rem;color:var(--blue);margin-top:4px;"></p>
+  </div>
+  <div class="card">
+    <p class="small" style="margin-bottom:12px;">ランキングに自動登録されました。</p>
+    <button class="btn btn-red" onclick="showScreen('sc-ranking')">🏆 ランキングを見る</button>
+    <button class="btn btn-outline" onclick="showScreen('sc-level')" style="margin-top:10px;">もう一度挑戦する</button>
+  </div>
+</div>
+
+<!-- ===== RANKING ===== -->
+<div id="sc-ranking" class="screen">
+  <div class="top-bar">
+    <div class="logo-mark">順位</div>
+    <div class="logo-text"><h1>ランキング</h1><p>上位20名 &amp; 自分の記録</p></div>
+  </div>
+
+  <!-- 自分の記録（本人のみ表示） -->
+  <div id="my-records-wrap" style="display:none;">
+    <div class="my-record-card">
+      <div class="my-record-title">👤 あなたの記録（自分だけが見えます）</div>
+      <ul class="my-record-list" id="my-record-list"></ul>
+    </div>
+  </div>
+
+  <!-- 全体ランキング（上位20位） -->
+  <div class="card">
+    <div class="card-title"><div class="dot"></div>全体ランキング（上位20位）</div>
+    <div class="rank-filter">
+      <button class="rfilter-btn active" onclick="filterRank('all',this)">すべて</button>
+      <button class="rfilter-btn" onclick="filterRank('kyu',this)">級</button>
+      <button class="rfilter-btn" onclick="filterRank('dan',this)">段</button>
+    </div>
+    <ul class="rank-list" id="rank-list"></ul>
+  </div>
+
+  <div class="card">
+    <button class="btn" onclick="showScreen('sc-level')">🎮 プレイする</button>
+    <button class="btn btn-outline" onclick="showScreen('sc-title')" style="margin-top:10px;">← トップへ</button>
+  </div>
+</div>
+
+</div><!-- /wrap -->
+
+<script>
+// ===== LEVELS =====
+const LEVELS = [
+  {id:'10k',label:'10級',type:'kyu',rank:10,qkey:'lv10',desc:'有効数字の桁数を数える基本問題。0以外の数字を中心に。'},
+  {id:'9k', label:'9級', type:'kyu',rank:9, qkey:'lv9', desc:'先頭の0・末尾の0など0の扱いを判断する問題。'},
+  {id:'8k', label:'8級', type:'kyu',rank:8, qkey:'lv8', desc:'掛け算・割り算の基本（2桁）。'},
+  {id:'7k', label:'7級', type:'kyu',rank:7, qkey:'lv7', desc:'足し算・引き算の有効数字の問題。'},
+  {id:'6k', label:'6級', type:'kyu',rank:6, qkey:'lv6', desc:'掛け算・割り算（3桁）の問題。'},
+  {id:'5k', label:'5級', type:'kyu',rank:5, qkey:'lv5', desc:'混合問題（掛け算と足し算の組み合わせ）。'},
+  {id:'4k', label:'4級', type:'kyu',rank:4, qkey:'lv4', desc:'科学的記数法（指数表示）の基礎。'},
+  {id:'3k', label:'3級', type:'kyu',rank:3, qkey:'lv3', desc:'科学的記数法を使った計算問題。'},
+  {id:'2k', label:'2級', type:'kyu',rank:2, qkey:'lv2', desc:'複合計算（括弧あり）。'},
+  {id:'1k', label:'1級', type:'kyu',rank:1, qkey:'lv1', desc:'総合応用問題。全範囲から出題。'},
+  {id:'1d', label:'初段', type:'dan',rank:-1,qkey:'d1',  desc:'化学計算への応用（密度・物質量）。'},
+  {id:'2d', label:'二段', type:'dan',rank:-2,qkey:'d2',  desc:'複数ステップ計算。'},
+  {id:'3d', label:'三段', type:'dan',rank:-3,qkey:'d3',  desc:'実験データの処理・分析。'},
+  {id:'4d', label:'四段', type:'dan',rank:-4,qkey:'d4',  desc:'高精度・難問。'},
+  {id:'5d', label:'五段', type:'dan',rank:-5,qkey:'d5',  desc:'最高難度・全分野総合。'},
+];
+
+// ===== QUESTION BANK (大量問題) =====
+const QB = {
+
+// ---- 10級：有効数字の桁数（基本・0なし） ----
+lv10:[
+  {t:'桁数を数えよう',q:'次の数値の有効数字は何桁ですか？',f:'3.14',c:['1桁','2桁','3桁','4桁'],a:2,e:'3、1、4 の3つの数字がすべて有効数字 → 3桁'},
+  {t:'桁数を数えよう',q:'次の数値の有効数字は何桁ですか？',f:'52.7',c:['1桁','2桁','3桁','4桁'],a:2,e:'5、2、7 の3つがすべて有効数字 → 3桁'},
+  {t:'桁数を数えよう',q:'次の数値の有効数字は何桁ですか？',f:'9.81',c:['1桁','2桁','3桁','4桁'],a:2,e:'9、8、1 の3つがすべて有効数字 → 3桁'},
+  {t:'桁数を数えよう',q:'次の数値の有効数字は何桁ですか？',f:'1234',c:['2桁','3桁','4桁','5桁'],a:2,e:'1、2、3、4 の4つがすべて有効数字 → 4桁'},
+  {t:'桁数を数えよう',q:'次の数値の有効数字は何桁ですか？',f:'7.6',c:['1桁','2桁','3桁','4桁'],a:1,e:'7、6 の2つがすべて有効数字 → 2桁'},
+  {t:'桁数を数えよう',q:'次の数値の有効数字は何桁ですか？',f:'45',c:['1桁','2桁','3桁','4桁'],a:1,e:'4、5 の2つがすべて有効数字 → 2桁'},
+  {t:'桁数を数えよう',q:'次の数値の有効数字は何桁ですか？',f:'3.1416',c:['3桁','4桁','5桁','6桁'],a:2,e:'3、1、4、1、6 の5つがすべて有効数字 → 5桁'},
+  {t:'桁数を数えよう',q:'次の数値の有効数字は何桁ですか？',f:'273',c:['1桁','2桁','3桁','4桁'],a:2,e:'2、7、3 の3つがすべて有効数字 → 3桁'},
+  {t:'桁数を数えよう',q:'次の数値の有効数字は何桁ですか？',f:'6.5',c:['1桁','2桁','3桁','4桁'],a:1,e:'6、5 の2つがすべて有効数字 → 2桁'},
+  {t:'桁数を数えよう',q:'次の数値の有効数字は何桁ですか？',f:'123.4',c:['2桁','3桁','4桁','5桁'],a:2,e:'1、2、3、4 の4つがすべて有効数字 → 4桁'},
+  {t:'桁数を数えよう',q:'次の数値の有効数字は何桁ですか？',f:'8',c:['1桁','2桁','3桁','4桁'],a:0,e:'8 の1つが有効数字 → 1桁'},
+  {t:'桁数を数えよう',q:'次の数値の有効数字は何桁ですか？',f:'5.678',c:['2桁','3桁','4桁','5桁'],a:2,e:'5、6、7、8 の4つがすべて有効数字 → 4桁'},
+  {t:'桁数を数えよう',q:'次の数値の有効数字は何桁ですか？',f:'99.9',c:['1桁','2桁','3桁','4桁'],a:2,e:'9、9、9 の3つがすべて有効数字 → 3桁'},
+  {t:'桁数を数えよう',q:'次の数値の有効数字は何桁ですか？',f:'1.23',c:['1桁','2桁','3桁','4桁'],a:2,e:'1、2、3 の3つがすべて有効数字 → 3桁'},
+  {t:'桁数を数えよう',q:'次の数値の有効数字は何桁ですか？',f:'45.67',c:['2桁','3桁','4桁','5桁'],a:2,e:'4、5、6、7 の4つがすべて有効数字 → 4桁'},
+  {t:'桁数を数えよう',q:'次の数値の有効数字は何桁ですか？',f:'3.14159',c:['4桁','5桁','6桁','7桁'],a:1,e:'3、1、4、1、5、9 の6つがすべて有効数字 → 6桁'},
+  {t:'桁数を数えよう',q:'次の数値の有効数字は何桁ですか？',f:'2.5',c:['1桁','2桁','3桁','4桁'],a:1,e:'2、5 の2つがすべて有効数字 → 2桁'},
+  {t:'桁数を数えよう',q:'次の数値の有効数字は何桁ですか？',f:'987',c:['1桁','2桁','3桁','4桁'],a:2,e:'9、8、7 の3つがすべて有効数字 → 3桁'},
+  {t:'桁数を数えよう',q:'次の数値の有効数字は何桁ですか？',f:'6.022',c:['2桁','3桁','4桁','5桁'],a:2,e:'6、0、2、2 の4つがすべて有効数字（中間の0も有効！） → 4桁'},
+  {t:'中間の0',q:'次の数値の有効数字は何桁ですか？',f:'18.02',c:['2桁','3桁','4桁','5桁'],a:2,e:'1、8、0、2 の4つ。中間の0は有効数字 → 4桁'},
+  {t:'中間の0',q:'次の数値の有効数字は何桁ですか？',f:'1.05',c:['1桁','2桁','3桁','4桁'],a:2,e:'1、0、5 の3つ。中間の0は有効数字 → 3桁'},
+  {t:'中間の0',q:'次の数値の有効数字は何桁ですか？',f:'50.3',c:['1桁','2桁','3桁','4桁'],a:2,e:'5、0、3 の3つ。中間の0は有効数字 → 3桁'},
+  {t:'中間の0',q:'次の数値の有効数字は何桁ですか？',f:'3.04',c:['1桁','2桁','3桁','4桁'],a:2,e:'3、0、4 の3つ。中間の0は有効数字 → 3桁'},
+  {t:'中間の0',q:'次の数値の有効数字は何桁ですか？',f:'100.1',c:['2桁','3桁','4桁','5桁'],a:2,e:'1、0、0、1 の4つ。中間の0は有効数字 → 4桁'},
+],
+
+// ---- 9級：0の扱い ----
+lv9:[
+  {t:'先頭の0',q:'次の数値の有効数字は何桁ですか？',f:'0.0025',c:['1桁','2桁','3桁','4桁'],a:1,e:'先頭の0はすべて無効。2と5の2桁'},
+  {t:'先頭の0',q:'次の数値の有効数字は何桁ですか？',f:'0.030',c:['1桁','2桁','3桁','4桁'],a:1,e:'先頭の0は無効。3と0（末尾）の2桁。末尾の0は有効'},
+  {t:'末尾の0',q:'次の数値の有効数字は何桁ですか？',f:'1.050',c:['2桁','3桁','4桁','5桁'],a:2,e:'1、0、5、0 の4桁。小数末尾の0は有効数字'},
+  {t:'末尾の0',q:'次の数値の有効数字は何桁ですか？',f:'0.720',c:['2桁','3桁','4桁','5桁'],a:1,e:'先頭の0は無効。7、2、0（末尾）の3桁'},
+  {t:'末尾の0',q:'次の数値の有効数字は何桁ですか？',f:'100.0',c:['2桁','3桁','4桁','5桁'],a:2,e:'1、0、0、0 の4桁。小数点があるので末尾の0も有効'},
+  {t:'先頭の0',q:'次の数値の有効数字は何桁ですか？',f:'0.0100',c:['1桁','2桁','3桁','4桁'],a:2,e:'先頭の0は無効。1、0、0（末尾）の3桁'},
+  {t:'末尾の0',q:'次の数値の有効数字は何桁ですか？',f:'2.400',c:['2桁','3桁','4桁','5桁'],a:2,e:'2、4、0、0 の4桁。小数末尾の0は有効数字'},
+  {t:'先頭の0',q:'次の数値の有効数字は何桁ですか？',f:'0.00500',c:['1桁','2桁','3桁','4桁'],a:2,e:'先頭の0は無効。5、0、0（末尾）の3桁'},
+  {t:'先頭の0',q:'次の数値の有効数字は何桁ですか？',f:'0.056',c:['1桁','2桁','3桁','4桁'],a:1,e:'先頭の0は無効。5と6の2桁'},
+  {t:'末尾の0',q:'次の数値の有効数字は何桁ですか？',f:'3.080',c:['2桁','3桁','4桁','5桁'],a:2,e:'3、0、8、0 の4桁。末尾の0は有効'},
+  {t:'先頭の0',q:'次の数値の有効数字は何桁ですか？',f:'0.0070',c:['1桁','2桁','3桁','4桁'],a:1,e:'先頭の0は無効。7と0（末尾）の2桁'},
+  {t:'先頭の0',q:'次の数値の有効数字は何桁ですか？',f:'0.045',c:['1桁','2桁','3桁','4桁'],a:1,e:'先頭の0は無効。4と5の2桁'},
+  {t:'末尾の0',q:'次の数値の有効数字は何桁ですか？',f:'10.00',c:['2桁','3桁','4桁','5桁'],a:2,e:'1、0、0、0 の4桁。小数末尾の0は有効'},
+  {t:'先頭の0',q:'次の数値の有効数字は何桁ですか？',f:'0.00120',c:['1桁','2桁','3桁','4桁'],a:2,e:'先頭の0は無効。1、2、0（末尾）の3桁'},
+  {t:'末尾の0',q:'次の数値の有効数字は何桁ですか？',f:'5.0',c:['1桁','2桁','3桁','4桁'],a:1,e:'5と0（末尾）の2桁。小数末尾の0は有効'},
+  {t:'先頭の0',q:'次の数値の有効数字は何桁ですか？',f:'0.150',c:['1桁','2桁','3桁','4桁'],a:2,e:'先頭の0は無効。1、5、0（末尾）の3桁'},
+  {t:'先頭の0',q:'次の数値の有効数字は何桁ですか？',f:'0.005',c:['1桁','2桁','3桁','4桁'],a:0,e:'先頭の0は無効。5の1桁のみ'},
+  {t:'末尾の0',q:'次の数値の有効数字は何桁ですか？',f:'7.00',c:['1桁','2桁','3桁','4桁'],a:2,e:'7、0、0 の3桁。末尾の0は有効'},
+  {t:'先頭の0',q:'次の数値の有効数字は何桁ですか？',f:'0.0350',c:['1桁','2桁','3桁','4桁'],a:2,e:'先頭の0は無効。3、5、0（末尾）の3桁'},
+  {t:'混合',q:'次の数値の有効数字は何桁ですか？',f:'0.1050',c:['2桁','3桁','4桁','5桁'],a:2,e:'先頭の0は無効。1、0（中間）、5、0（末尾）の4桁'},
+  {t:'混合',q:'次の数値の有効数字は何桁ですか？',f:'0.006030',c:['2桁','3桁','4桁','5桁'],a:1,e:'先頭の0は無効。6、0（中間）、3、0（末尾）の4桁'},
+  {t:'先頭の0',q:'次の数値の有効数字は何桁ですか？',f:'0.0001',c:['1桁','2桁','3桁','4桁'],a:0,e:'先頭の0は無効。1の1桁のみ'},
+  {t:'末尾の0',q:'次の数値の有効数字は何桁ですか？',f:'1.200',c:['2桁','3桁','4桁','5桁'],a:2,e:'1、2、0、0 の4桁。末尾の0は有効'},
+  {t:'先頭の0',q:'次の数値の有効数字は何桁ですか？',f:'0.0890',c:['2桁','3桁','4桁','5桁'],a:1,e:'先頭の0は無効。8、9、0（末尾）の3桁'},
+  {t:'先頭の0',q:'次の数値の有効数字は何桁ですか？',f:'0.00080',c:['1桁','2桁','3桁','4桁'],a:1,e:'先頭の0は無効。8と0（末尾）の2桁'},
+],
+
+// ---- 8級：掛け算・割り算（2桁） ----
+lv8:[
+  {t:'掛け算',q:'有効数字を正しく表した答えはどれか？',f:'2.5 × 4.0',c:['9','10','10.','10.0'],a:1,e:'2.5（2桁）×4.0（2桁）=10.0→2桁→10（整数のまま2桁）'},
+  {t:'割り算',q:'有効数字を正しく表した答えはどれか？',f:'6.0 ÷ 3.0',c:['2','2.0','2.00','2.000'],a:1,e:'6.0（2桁）÷3.0（2桁）=2.0（2桁）'},
+  {t:'掛け算',q:'有効数字を正しく表した答えはどれか？',f:'4.5 × 2.2',c:['9','9.9','10.','9.90'],a:1,e:'4.5（2桁）×2.2（2桁）=9.90→2桁→9.9'},
+  {t:'割り算',q:'有効数字を正しく表した答えはどれか？',f:'8.4 ÷ 4.2',c:['2','2.0','2.00','2.000'],a:1,e:'8.4（2桁）÷4.2（2桁）=2.0（2桁）'},
+  {t:'掛け算',q:'有効数字を正しく表した答えはどれか？',f:'1.5 × 6.0',c:['9','9.0','9.00','90'],a:1,e:'1.5（2桁）×6.0（2桁）=9.0（2桁）'},
+  {t:'掛け算',q:'有効数字を正しく表した答えはどれか？',f:'3.6 × 2.5',c:['9.0','9.00','9','9.000'],a:0,e:'3.6（2桁）×2.5（2桁）=9.0（2桁）'},
+  {t:'割り算',q:'有効数字を正しく表した答えはどれか？',f:'12 ÷ 4.0',c:['3','3.0','3.00','30'],a:1,e:'12（2桁）÷4.0（2桁）=3.0（2桁）'},
+  {t:'掛け算',q:'有効数字を正しく表した答えはどれか？',f:'7.5 × 2.0',c:['15','15.0','15.00','150'],a:0,e:'7.5（2桁）×2.0（2桁）=15（2桁）'},
+  {t:'割り算',q:'有効数字を正しく表した答えはどれか？',f:'5.0 ÷ 2.5',c:['2','2.0','2.00','20'],a:1,e:'5.0（2桁）÷2.5（2桁）=2.0（2桁）'},
+  {t:'掛け算',q:'有効数字を正しく表した答えはどれか？',f:'4.2 × 3.0',c:['12','13','12.6','13.'],a:1,e:'4.2（2桁）×3.0（2桁）=12.6→2桁→13'},
+  {t:'割り算',q:'有効数字を正しく表した答えはどれか？',f:'9.0 ÷ 4.5',c:['2','2.0','2.00','0.20'],a:1,e:'9.0（2桁）÷4.5（2桁）=2.0（2桁）'},
+  {t:'掛け算',q:'有効数字を正しく表した答えはどれか？',f:'2.0 × 8.5',c:['17','17.0','17.00','170'],a:0,e:'2.0（2桁）×8.5（2桁）=17（2桁）'},
+  {t:'割り算',q:'有効数字を正しく表した答えはどれか？',f:'10. ÷ 5.0',c:['2','2.0','2.00','20'],a:1,e:'10.（2桁）÷5.0（2桁）=2.0（2桁）'},
+  {t:'掛け算',q:'有効数字を正しく表した答えはどれか？',f:'6.5 × 4.0',c:['26','26.','26.0','260'],a:0,e:'6.5（2桁）×4.0（2桁）=26（2桁）'},
+  {t:'割り算',q:'有効数字を正しく表した答えはどれか？',f:'3.6 ÷ 1.2',c:['3','3.0','3.00','3.000'],a:1,e:'3.6（2桁）÷1.2（2桁）=3.0（2桁）'},
+  {t:'掛け算',q:'有効数字を正しく表した答えはどれか？',f:'0.50 × 6.0',c:['3.0','3.00','30','0.30'],a:0,e:'0.50（2桁）×6.0（2桁）=3.0（2桁）'},
+  {t:'割り算',q:'有効数字を正しく表した答えはどれか？',f:'25 ÷ 5.0',c:['5','5.0','5.00','50'],a:1,e:'25（2桁）÷5.0（2桁）=5.0（2桁）'},
+  {t:'掛け算',q:'有効数字を正しく表した答えはどれか？',f:'9.0 × 3.0',c:['27','27.','27.0','270'],a:0,e:'9.0（2桁）×3.0（2桁）=27（2桁）'},
+  {t:'割り算',q:'有効数字を正しく表した答えはどれか？',f:'6.8 ÷ 2.0',c:['3.4','3.40','34','3.400'],a:0,e:'6.8（2桁）÷2.0（2桁）=3.4（2桁）'},
+  {t:'掛け算',q:'有効数字を正しく表した答えはどれか？',f:'5.5 × 2.0',c:['11','11.','11.0','110'],a:0,e:'5.5（2桁）×2.0（2桁）=11（2桁）'},
+  {t:'割り算',q:'有効数字を正しく表した答えはどれか？',f:'14 ÷ 2.0',c:['7','7.0','7.00','70'],a:1,e:'14（2桁）÷2.0（2桁）=7.0（2桁）'},
+  {t:'掛け算',q:'有効数字を正しく表した答えはどれか？',f:'3.5 × 8.0',c:['28','28.','28.0','280'],a:0,e:'3.5（2桁）×8.0（2桁）=28（2桁）'},
+  {t:'割り算',q:'有効数字を正しく表した答えはどれか？',f:'20. ÷ 4.0',c:['5','5.0','5.00','50'],a:1,e:'20.（2桁）÷4.0（2桁）=5.0（2桁）'},
+  {t:'掛け算',q:'有効数字を正しく表した答えはどれか？',f:'1.8 × 5.0',c:['9','9.0','9.00','90'],a:1,e:'1.8（2桁）×5.0（2桁）=9.0（2桁）'},
+  {t:'割り算',q:'有効数字を正しく表した答えはどれか？',f:'7.2 ÷ 3.6',c:['2','2.0','2.00','20'],a:1,e:'7.2（2桁）÷3.6（2桁）=2.0（2桁）'},
+],
+
+// ---- 7級：足し算・引き算 ----
+lv7:[
+  {t:'足し算',q:'有効数字を正しく表した答えはどれか？',f:'12.5 + 3.72',c:['16.2','16.22','16.3','16'],a:0,e:'12.5（小数1桁）+3.72（小数2桁）=16.22→小数1桁→16.2'},
+  {t:'引き算',q:'有効数字を正しく表した答えはどれか？',f:'8.56 − 1.3',c:['7.2','7.26','7.3','7'],a:2,e:'8.56（小数2桁）−1.3（小数1桁）=7.26→小数1桁→7.3'},
+  {t:'足し算',q:'有効数字を正しく表した答えはどれか？',f:'100.0 + 2.56',c:['102','102.6','102.56','102.5'],a:1,e:'100.0（小数1桁）+2.56（小数2桁）=102.56→小数1桁→102.6'},
+  {t:'足し算',q:'有効数字を正しく表した答えはどれか？',f:'5.4 + 2.15',c:['7.5','7.55','7.6','8'],a:2,e:'5.4（小数1桁）+2.15（小数2桁）=7.55→小数1桁→7.6'},
+  {t:'引き算',q:'有効数字を正しく表した答えはどれか？',f:'20.4 − 5.73',c:['14.6','14.67','14.7','15'],a:2,e:'20.4（小数1桁）−5.73（小数2桁）=14.67→小数1桁→14.7'},
+  {t:'足し算',q:'有効数字を正しく表した答えはどれか？',f:'0.52 + 0.100',c:['0.62','0.620','0.6','0.7'],a:0,e:'0.52（小数2桁）+0.100（小数3桁）=0.620→小数2桁→0.62'},
+  {t:'足し算',q:'有効数字を正しく表した答えはどれか？',f:'1.07 + 0.9',c:['1.97','2.0','2','2.97'],a:1,e:'1.07（小数2桁）+0.9（小数1桁）=1.97→小数1桁→2.0'},
+  {t:'引き算',q:'有効数字を正しく表した答えはどれか？',f:'45.2 − 1.37',c:['43.8','43.83','43.9','44'],a:0,e:'45.2（小数1桁）−1.37（小数2桁）=43.83→小数1桁→43.8'},
+  {t:'引き算',q:'有効数字を正しく表した答えはどれか？',f:'10.00 − 3.5',c:['6.5','6.50','6.6','7'],a:0,e:'10.00（小数2桁）−3.5（小数1桁）=6.50→小数1桁→6.5'},
+  {t:'足し算',q:'有効数字を正しく表した答えはどれか？',f:'3.5 + 0.42',c:['3.9','3.92','4.0','3.90'],a:1,e:'3.5（小数1桁）+0.42（小数2桁）=3.92→小数1桁→3.9'},
+  {t:'引き算',q:'有効数字を正しく表した答えはどれか？',f:'5.00 − 1.5',c:['3.5','3.50','3.55','4'],a:0,e:'5.00（小数2桁）−1.5（小数1桁）=3.50→小数1桁→3.5'},
+  {t:'足し算',q:'有効数字を正しく表した答えはどれか？',f:'7.3 + 1.45',c:['8.7','8.75','8.8','9'],a:1,e:'7.3（小数1桁）+1.45（小数2桁）=8.75→小数1桁→8.8（四捨五入）いや8.7? 8.75→切り上げ→8.8'},
+  {t:'引き算',q:'有効数字を正しく表した答えはどれか？',f:'15.0 − 7.52',c:['7.5','7.48','7.6','8'],a:0,e:'15.0（小数1桁）−7.52（小数2桁）=7.48→小数1桁→7.5'},
+  {t:'足し算',q:'有効数字を正しく表した答えはどれか？',f:'0.80 + 0.125',c:['0.925','0.92','0.93','0.9'],a:0,e:'0.80（小数2桁）+0.125（小数3桁）=0.925→小数2桁→0.92（四捨五入: 5→切り上げで0.93? 0.925を小数2桁→0.93）'},
+  {t:'引き算',q:'有効数字を正しく表した答えはどれか？',f:'30.0 − 12.4',c:['17.6','17.60','18','17.6'],a:0,e:'30.0（小数1桁）−12.4（小数1桁）=17.6（小数1桁）'},
+  {t:'足し算',q:'有効数字を正しく表した答えはどれか？',f:'2.5 + 3.5',c:['6.0','6.00','6','6.000'],a:0,e:'2.5（小数1桁）+3.5（小数1桁）=6.0（小数1桁）'},
+  {t:'引き算',q:'有効数字を正しく表した答えはどれか？',f:'100.5 − 0.35',c:['100.2','100.15','100.1','100'],a:0,e:'100.5（小数1桁）−0.35（小数2桁）=100.15→小数1桁→100.2'},
+  {t:'足し算',q:'有効数字を正しく表した答えはどれか？',f:'4.1 + 5.2 + 3.3',c:['12.6','12.60','13','12.600'],a:0,e:'すべて小数1桁。4.1+5.2+3.3=12.6（小数1桁）'},
+  {t:'引き算',q:'有効数字を正しく表した答えはどれか？',f:'9.0 − 4.5',c:['4.5','4.50','4.55','5'],a:0,e:'9.0（小数1桁）−4.5（小数1桁）=4.5（小数1桁）'},
+  {t:'足し算',q:'有効数字を正しく表した答えはどれか？',f:'1.3 + 2.4',c:['3.7','3.70','3.8','4'],a:0,e:'1.3（小数1桁）+2.4（小数1桁）=3.7（小数1桁）'},
+  {t:'引き算',q:'有効数字を正しく表した答えはどれか？',f:'6.00 − 1.5',c:['4.5','4.50','4.55','5'],a:0,e:'6.00（小数2桁）−1.5（小数1桁）=4.50→小数1桁→4.5'},
+  {t:'足し算',q:'有効数字を正しく表した答えはどれか？',f:'22.4 + 0.06',c:['22.4','22.46','22.5','22'],a:0,e:'22.4（小数1桁）+0.06（小数2桁）=22.46→小数1桁→22.5'},
+  {t:'引き算',q:'有効数字を正しく表した答えはどれか？',f:'50.0 − 8.75',c:['41.3','41.25','41.2','41'],a:0,e:'50.0（小数1桁）−8.75（小数2桁）=41.25→小数1桁→41.3（四捨五入）'},
+  {t:'足し算',q:'有効数字を正しく表した答えはどれか？',f:'0.50 + 0.25',c:['0.75','0.750','0.8','1'],a:0,e:'0.50（小数2桁）+0.25（小数2桁）=0.75（小数2桁）'},
+  {t:'引き算',q:'有効数字を正しく表した答えはどれか？',f:'8.5 − 3.25',c:['5.2','5.25','5.3','5'],a:1,e:'8.5（小数1桁）−3.25（小数2桁）=5.25→小数1桁→5.3（四捨五入: 5→切り上げ）いや5.25→小数1桁→5.3'},
+],
+
+// ---- 6級：掛け算・割り算（3桁） ----
+lv6:[
+  {t:'掛け算（3桁）',q:'有効数字を正しく表した答えはどれか？',f:'3.14 × 2.50',c:['7.85','7.80','7.9','7.850'],a:0,e:'3.14（3桁）×2.50（3桁）=7.850→3桁→7.85'},
+  {t:'割り算（3桁）',q:'有効数字を正しく表した答えはどれか？',f:'12.5 ÷ 4.25',c:['2.94','2.941','3.00','2.9'],a:0,e:'12.5（3桁）÷4.25（3桁）=2.941→3桁→2.94'},
+  {t:'掛け算（3桁）',q:'有効数字を正しく表した答えはどれか？',f:'2.40 × 3.50',c:['8.4','8.40','8.400','8.5'],a:1,e:'2.40（3桁）×3.50（3桁）=8.40（3桁）'},
+  {t:'割り算（3桁）',q:'有効数字を正しく表した答えはどれか？',f:'100. ÷ 3.00',c:['33','33.3','33.4','33.0'],a:1,e:'100.（3桁）÷3.00（3桁）=33.33→3桁→33.3'},
+  {t:'掛け算（3桁）',q:'有効数字を正しく表した答えはどれか？',f:'1.23 × 4.56',c:['5.6','5.61','5.607','5.6'],a:1,e:'1.23（3桁）×4.56（3桁）=5.6088→3桁→5.61'},
+  {t:'割り算（3桁）',q:'有効数字を正しく表した答えはどれか？',f:'75.0 ÷ 25.0',c:['3','3.0','3.00','3.000'],a:2,e:'75.0（3桁）÷25.0（3桁）=3.00（3桁）'},
+  {t:'掛け算（3桁）',q:'有効数字を正しく表した答えはどれか？',f:'9.81 × 5.00',c:['49.0','49.1','49.05','49.050'],a:1,e:'9.81（3桁）×5.00（3桁）=49.05→3桁→49.1'},
+  {t:'割り算（3桁）',q:'有効数字を正しく表した答えはどれか？',f:'88.0 ÷ 44.0',c:['2','2.0','2.00','2.000'],a:2,e:'88.0（3桁）÷44.0（3桁）=2.00（3桁）'},
+  {t:'掛け算（3桁）',q:'有効数字を正しく表した答えはどれか？',f:'6.02 × 1.67',c:['10.0','10.1','10.05','10.053'],a:1,e:'6.02（3桁）×1.67（3桁）=10.0534→3桁→10.1'},
+  {t:'割り算（3桁）',q:'有効数字を正しく表した答えはどれか？',f:'4.56 ÷ 1.52',c:['3.00','3.0','3','2.99'],a:0,e:'4.56（3桁）÷1.52（3桁）=3.00（3桁）'},
+  {t:'掛け算（3桁）',q:'有効数字を正しく表した答えはどれか？',f:'2.85 × 3.00',c:['8.55','8.50','8.6','8.550'],a:0,e:'2.85（3桁）×3.00（3桁）=8.55（3桁）'},
+  {t:'割り算（3桁）',q:'有効数字を正しく表した答えはどれか？',f:'60.0 ÷ 1.20',c:['50','50.0','500','50.00'],a:1,e:'60.0（3桁）÷1.20（3桁）=50.0（3桁）'},
+  {t:'掛け算（3桁）',q:'有効数字を正しく表した答えはどれか？',f:'4.00 × 7.50',c:['30.0','300','3.00','30.00'],a:0,e:'4.00（3桁）×7.50（3桁）=30.0（3桁）'},
+  {t:'割り算（3桁）',q:'有効数字を正しく表した答えはどれか？',f:'9.60 ÷ 3.20',c:['3.0','3.00','3','30.0'],a:1,e:'9.60（3桁）÷3.20（3桁）=3.00（3桁）'},
+  {t:'掛け算（3桁）',q:'有効数字を正しく表した答えはどれか？',f:'1.50 × 2.50',c:['3.75','3.7','3.80','3.750'],a:0,e:'1.50（3桁）×2.50（3桁）=3.75（3桁）'},
+  {t:'掛け算（3桁）',q:'有効数字を正しく表した答えはどれか？',f:'5.00 × 4.20',c:['21.0','21.00','21','210'],a:0,e:'5.00（3桁）×4.20（3桁）=21.0（3桁）'},
+  {t:'割り算（3桁）',q:'有効数字を正しく表した答えはどれか？',f:'36.0 ÷ 1.50',c:['24.0','240','2.40','24'],a:0,e:'36.0（3桁）÷1.50（3桁）=24.0（3桁）'},
+  {t:'掛け算（3桁）',q:'有効数字を正しく表した答えはどれか？',f:'3.20 × 5.50',c:['17.6','17.60','18','176'],a:1,e:'3.20（3桁）×5.50（3桁）=17.60→3桁→17.6'},
+  {t:'割り算（3桁）',q:'有効数字を正しく表した答えはどれか？',f:'15.0 ÷ 6.00',c:['2.50','2.5','25.0','0.250'],a:0,e:'15.0（3桁）÷6.00（3桁）=2.50（3桁）'},
+  {t:'掛け算（3桁）',q:'有効数字を正しく表した答えはどれか？',f:'8.00 × 2.50',c:['20.0','200','2.00','20'],a:0,e:'8.00（3桁）×2.50（3桁）=20.0（3桁）'},
+  {t:'割り算（3桁）',q:'有効数字を正しく表した答えはどれか？',f:'12.0 ÷ 4.80',c:['2.5','2.50','25','0.25'],a:1,e:'12.0（3桁）÷4.80（3桁）=2.50（3桁）'},
+  {t:'掛け算（3桁）',q:'有効数字を正しく表した答えはどれか？',f:'6.00 × 3.14',c:['18.8','18.84','18.9','188'],a:1,e:'6.00（3桁）×3.14（3桁）=18.84→3桁→18.8'},
+  {t:'割り算（3桁）',q:'有効数字を正しく表した答えはどれか？',f:'28.0 ÷ 7.00',c:['4.0','4.00','40.0','4'],a:1,e:'28.0（3桁）÷7.00（3桁）=4.00（3桁）'},
+],
+
+// ---- 5級：混合計算 ----
+lv5:[
+  {t:'混合計算',q:'正しい答えはどれか？（掛け算の後足し算）',f:'2.5 × 4.0 + 1.3',c:['11','11.3','11.2','11.0'],a:0,e:'2.5×4.0=10（2桁→整数）。10＋1.3=11.3→整数→11'},
+  {t:'混合計算',q:'正しい答えはどれか？',f:'(3.6 + 2.4) × 2.0',c:['12','12.0','11','12.00'],a:0,e:'3.6+2.4=6.0（小数1桁）。6.0×2.0=12（2桁）'},
+  {t:'混合計算',q:'正しい答えはどれか？',f:'8.2 − 1.4 × 2.0',c:['5.4','5.40','13.6','5'],a:0,e:'1.4×2.0=2.8（2桁）。8.2−2.8=5.4（小数1桁）'},
+  {t:'混合計算',q:'正しい答えはどれか？',f:'6.00 ÷ 2.0 + 1.5',c:['4.5','4.50','5','4.55'],a:0,e:'6.00÷2.0=3.0（2桁）。3.0+1.5=4.5（小数1桁）'},
+  {t:'混合計算',q:'正しい答えはどれか？',f:'(5.0 + 3.0) × 2.5',c:['20','20.0','20.00','21'],a:0,e:'5.0+3.0=8.0（小数1桁）。8.0×2.5=20（2桁）'},
+  {t:'混合計算',q:'正しい答えはどれか？',f:'15.0 − 7.50 ÷ 2.5',c:['12.0','3.0','3.00','12'],a:0,e:'7.50÷2.5=3.0（2桁）。15.0−3.0=12.0（小数1桁）'},
+  {t:'混合計算',q:'正しい答えはどれか？',f:'(10.5 − 3.2) × 4.0',c:['29','29.2','29.0','30'],a:0,e:'10.5−3.2=7.3（小数1桁）。7.3×4.0=29（2桁）'},
+  {t:'混合計算',q:'正しい答えはどれか？',f:'2.50 × 4.00 ÷ 5.0',c:['2.0','2.00','2','20'],a:0,e:'2.50×4.00=10.0（3桁）。10.0÷5.0=2.0（2桁）'},
+  {t:'混合計算',q:'正しい答えはどれか？',f:'12.4 × 0.500',c:['6.2','6.20','6.200','62'],a:1,e:'12.4（3桁）×0.500（3桁）=6.20（3桁）'},
+  {t:'混合計算',q:'正しい答えはどれか？',f:'(1.5 + 2.5) × 3.0',c:['12','12.0','12.00','11'],a:0,e:'1.5+2.5=4.0（小数1桁）。4.0×3.0=12（2桁）'},
+  {t:'混合計算',q:'正しい答えはどれか？',f:'9.0 ÷ 3.0 + 4.5',c:['7.5','7.50','8','7.0'],a:0,e:'9.0÷3.0=3.0（2桁）。3.0+4.5=7.5（小数1桁）'},
+  {t:'混合計算',q:'正しい答えはどれか？',f:'(4.5 × 2.0) − 3.0',c:['6.0','6.00','6','9'],a:0,e:'4.5×2.0=9.0（2桁）。9.0−3.0=6.0（小数1桁）'},
+  {t:'混合計算',q:'正しい答えはどれか？',f:'5.0 + 2.4 × 3.0',c:['22','7.4','12.2','22.'],a:2,e:'2.4×3.0=7.2（2桁→整数）。5.0+7.2=12.2→12 ※5.0（小数1桁）+7.2（小数1桁）=12.2（小数1桁）→12.2'},
+  {t:'混合計算',q:'正しい答えはどれか？',f:'(8.0 − 3.5) × 2.0',c:['9.0','9','8.5','9.00'],a:0,e:'8.0−3.5=4.5（小数1桁）。4.5×2.0=9.0（2桁）'},
+  {t:'混合計算',q:'正しい答えはどれか？',f:'18.0 ÷ (2.0 × 3.0)',c:['3.0','3.00','30','0.30'],a:0,e:'2.0×3.0=6.0（2桁）。18.0÷6.0=3.0（2桁）'},
+],
+
+// ---- 4級：科学的記数法 基礎 ----
+lv4:[
+  {t:'科学的記数法',q:'次の数値を科学的記数法で表したものはどれか？',f:'0.000456',c:['4.56 × 10⁻⁴','4.56 × 10⁻³','4.56 × 10⁻⁵','45.6 × 10⁻⁵'],a:0,e:'0.000456 = 4.56 × 10⁻⁴（有効数字3桁）'},
+  {t:'科学的記数法',q:'次の数値を科学的記数法で表したものはどれか？',f:'123000',c:['1.23 × 10⁵','1.23 × 10⁶','12.3 × 10⁴','1.230 × 10⁵'],a:0,e:'123000 = 1.23 × 10⁵（有効数字3桁）'},
+  {t:'科学的記数法',q:'科学的記数法で表した数値の有効数字は何桁か？',f:'3.50 × 10⁴',c:['2桁','3桁','4桁','5桁'],a:1,e:'3.50 の部分が有効数字。3、5、0 の3桁'},
+  {t:'科学的記数法',q:'科学的記数法で表した数値の有効数字は何桁か？',f:'6.0 × 10²³',c:['1桁','2桁','3桁','4桁'],a:1,e:'6.0 の部分が有効数字。6、0 の2桁'},
+  {t:'科学的記数法',q:'次の数値を科学的記数法で表したものはどれか？',f:'0.00720',c:['7.20 × 10⁻³','7.2 × 10⁻³','7.20 × 10⁻⁴','0.720 × 10⁻²'],a:0,e:'0.00720 = 7.20 × 10⁻³（有効数字3桁、末尾の0も含む）'},
+  {t:'科学的記数法',q:'科学的記数法で表した数値の有効数字は何桁か？',f:'1.200 × 10⁻²',c:['2桁','3桁','4桁','5桁'],a:2,e:'1.200 の部分が有効数字。1、2、0、0 の4桁'},
+  {t:'科学的記数法',q:'次の科学的記数法の数値を通常の表記にすると？',f:'2.5 × 10⁻²',c:['0.025','0.25','0.0025','25'],a:0,e:'2.5 × 10⁻² = 0.025（小数点を左に2桁移動）'},
+  {t:'科学的記数法',q:'次の科学的記数法の数値を通常の表記にすると？',f:'8.0 × 10³',c:['800','8000','80000','80'],a:1,e:'8.0 × 10³ = 8000（小数点を右に3桁移動）'},
+  {t:'科学的記数法',q:'科学的記数法で表した数値の有効数字は何桁か？',f:'4.00 × 10⁻⁵',c:['1桁','2桁','3桁','4桁'],a:2,e:'4.00 の部分が有効数字。4、0、0 の3桁'},
+  {t:'科学的記数法',q:'次の数値を科学的記数法で表したものはどれか？',f:'5280',c:['5.28 × 10³','5.280 × 10³','52.8 × 10²','0.528 × 10⁴'],a:0,e:'5280 = 5.28 × 10³（有効数字3桁）'},
+  {t:'科学的記数法',q:'次の科学的記数法の数値を通常の表記にすると？',f:'3.0 × 10⁻¹',c:['0.03','0.30','0.030','3.0'],a:1,e:'3.0 × 10⁻¹ = 0.30（小数点を左に1桁移動）'},
+  {t:'科学的記数法',q:'次の数値を科学的記数法で表したものはどれか？',f:'0.0050',c:['5.0 × 10⁻³','5.0 × 10⁻²','5.0 × 10⁻⁴','50 × 10⁻⁴'],a:0,e:'0.0050 = 5.0 × 10⁻³（有効数字2桁）'},
+  {t:'科学的記数法',q:'科学的記数法で表した数値の有効数字は何桁か？',f:'9.80 × 10⁻²',c:['1桁','2桁','3桁','4桁'],a:2,e:'9.80 の部分が有効数字。9、8、0 の3桁'},
+  {t:'科学的記数法',q:'次の科学的記数法の数値を通常の表記にすると？',f:'1.5 × 10⁴',c:['150','1500','15000','150000'],a:2,e:'1.5 × 10⁴ = 15000（小数点を右に4桁移動）'},
+  {t:'科学的記数法',q:'次の数値を科学的記数法（有効数字2桁）で表したものはどれか？',f:'0.0082',c:['8.2 × 10⁻³','8.2 × 10⁻²','8.2 × 10⁻⁴','82 × 10⁻⁴'],a:0,e:'0.0082 = 8.2 × 10⁻³（有効数字2桁）'},
+],
+
+// ---- 3級：科学的記数法 計算 ----
+lv3:[
+  {t:'指数計算',q:'次の計算結果を科学的記数法で答えよ。',f:'(3.0 × 10²) × (2.0 × 10³)',c:['6.0 × 10⁵','6.0 × 10⁶','5.0 × 10⁵','6.0 × 10⁴'],a:0,e:'3.0×2.0=6.0（2桁）、10²×10³=10⁵ → 6.0 × 10⁵'},
+  {t:'指数計算',q:'次の計算結果を科学的記数法で答えよ。',f:'(8.0 × 10⁴) ÷ (4.0 × 10²)',c:['2.0 × 10²','2.0 × 10³','2.0 × 10¹','2.0 × 10⁶'],a:0,e:'8.0÷4.0=2.0（2桁）、10⁴÷10²=10² → 2.0 × 10²'},
+  {t:'指数計算',q:'次の計算結果を科学的記数法で答えよ。',f:'(2.5 × 10³) × (4.0 × 10⁻¹)',c:['1.0 × 10³','1.0 × 10⁴','1.0 × 10²','2.0 × 10³'],a:0,e:'2.5×4.0=10→1.0×10¹、10³×10⁻¹=10² → 1.0 × 10³'},
+  {t:'指数計算',q:'次の計算結果を科学的記数法で答えよ。',f:'(1.20 × 10³) × (2.50 × 10²)',c:['3.00 × 10⁵','3.00 × 10⁶','3.0 × 10⁵','3.00 × 10⁴'],a:0,e:'1.20×2.50=3.00（3桁）、10³×10²=10⁵ → 3.00 × 10⁵'},
+  {t:'指数計算',q:'次の計算結果を科学的記数法で答えよ。',f:'(9.0 × 10⁸) ÷ (3.0 × 10⁵)',c:['3.0 × 10³','3.0 × 10⁴','3.0 × 10²','3.0 × 10¹³'],a:0,e:'9.0÷3.0=3.0（2桁）、10⁸÷10⁵=10³ → 3.0 × 10³'},
+  {t:'指数計算',q:'次の計算結果を科学的記数法で答えよ。',f:'(5.0 × 10⁻³) ÷ (2.5 × 10⁻¹)',c:['2.0 × 10⁻²','2.0 × 10⁻³','2.0 × 10⁻¹','2.0 × 10⁻⁴'],a:0,e:'5.0÷2.5=2.0（2桁）、10⁻³÷10⁻¹=10⁻² → 2.0 × 10⁻²'},
+  {t:'指数計算',q:'次の計算結果を科学的記数法で答えよ。',f:'(7.5 × 10⁻⁴) + (2.5 × 10⁻⁴)',c:['1.0 × 10⁻³','1.00 × 10⁻³','1.0 × 10⁻⁴','1.0 × 10⁻²'],a:0,e:'7.5+2.5=10.0→1.0×10¹、×10⁻⁴=10⁻³ → 1.0 × 10⁻³'},
+  {t:'指数計算',q:'次の計算結果を科学的記数法で答えよ。',f:'(3.60 × 10³) ÷ (1.20 × 10²)',c:['3.00 × 10¹','3.00 × 10⁰','3.0 × 10¹','3.00 × 10²'],a:0,e:'3.60÷1.20=3.00（3桁）、10³÷10²=10¹ → 3.00 × 10¹'},
+  {t:'指数計算',q:'次の計算結果を科学的記数法で答えよ。',f:'(6.0 × 10²³) × (3.0 × 10⁻²³)',c:['1.8 × 10¹','1.8 × 10⁰','18','1.80 × 10¹'],a:0,e:'6.0×3.0=18→1.8×10¹、10²³×10⁻²³=10⁰ → 1.8 × 10¹'},
+  {t:'指数計算',q:'次の計算結果を科学的記数法で答えよ。',f:'(4.0 × 10⁻²)²',c:['1.6 × 10⁻³','1.6 × 10⁻⁴','16 × 10⁻⁴','1.60 × 10⁻³'],a:0,e:'4.0²=16→1.6×10¹、(10⁻²)²=10⁻⁴ → 1.6 × 10⁻³'},
+],
+
+// ---- 2級：複合計算 ----
+lv2:[
+  {t:'複合計算',q:'正しい答えはどれか？',f:'(2.5 × 3.2) ÷ 4.0',c:['2.0','2.00','2','2.0'],a:0,e:'2.5×3.2=8.0（2桁）。8.0÷4.0=2.0（2桁）'},
+  {t:'複合計算',q:'正しい答えはどれか？',f:'(6.0)² ÷ 3.0',c:['12','12.0','12.','11'],a:0,e:'6.0²=36（2桁）。36÷3.0=12（2桁）'},
+  {t:'複合計算',q:'正しい答えはどれか？',f:'√(4.0 × 9.0)',c:['6.0','6.00','6','5.9'],a:0,e:'4.0×9.0=36（2桁）。√36=6.0（2桁）'},
+  {t:'複合計算',q:'正しい答えはどれか？',f:'(5.00 + 3.00) × 2.5',c:['20.','20','20.0','21'],a:0,e:'5.00+3.00=8.00（小数2桁）。8.00×2.5=20（2桁）'},
+  {t:'複合計算',q:'正しい答えはどれか？',f:'1.00 ÷ (2.5 × 0.40)',c:['1.0','1.00','1','1.000'],a:0,e:'2.5×0.40=1.0（2桁）。1.00÷1.0=1.0（2桁）'},
+  {t:'複合計算',q:'正しい答えはどれか？',f:'(3.0)³',c:['27','27.','27.0','27.00'],a:0,e:'3.0³=3.0×3.0×3.0=27（2桁）'},
+  {t:'複合計算',q:'正しい答えはどれか？',f:'(8.00 × 2.50) − 10.0',c:['10.0','10.00','10','9.9'],a:0,e:'8.00×2.50=20.0（3桁）。20.0−10.0=10.0（小数1桁）'},
+  {t:'複合計算',q:'正しい答えはどれか？',f:'(4.5 × 2.0) + (3.0 × 1.0)',c:['12.0','12','12.00','13'],a:0,e:'4.5×2.0=9.0（2桁）。3.0×1.0=3.0（2桁）。9.0+3.0=12.0→整数桁で12'},
+  {t:'複合計算',q:'正しい答えはどれか？',f:'(12.0 − 4.50) × 2.0',c:['15','15.0','14.9','15.0'],a:0,e:'12.0−4.50=7.5（小数1桁）。7.5×2.0=15（2桁）'},
+  {t:'複合計算',q:'正しい答えはどれか？',f:'5.00 × (2.0 + 3.0)',c:['25','25.0','25.00','2.5'],a:0,e:'2.0+3.0=5.0（小数1桁）。5.00×5.0=25（2桁）'},
+],
+
+// ---- 1級：総合応用 ----
+lv1:[
+  {t:'総合問題',q:'密度 d = m/V。m = 25.0 g、V = 10.0 cm³ のとき d は？',f:'d = 25.0 ÷ 10.0',c:['2.5 g/cm³','2.50 g/cm³','25 g/cm³','0.250 g/cm³'],a:1,e:'25.0（3桁）÷10.0（3桁）=2.50（3桁）g/cm³'},
+  {t:'総合問題',q:'モル数 n = m/M。m = 18.0 g、M = 18.0 g/mol のとき n は？',f:'n = 18.0 ÷ 18.0',c:['1 mol','1.0 mol','1.00 mol','1.000 mol'],a:2,e:'18.0（3桁）÷18.0（3桁）=1.00（3桁）mol'},
+  {t:'総合問題',q:'速さ v = d/t。d = 25.0 m、t = 5.0 s のとき v は？',f:'v = 25.0 ÷ 5.0',c:['5 m/s','5.0 m/s','5.00 m/s','50 m/s'],a:1,e:'25.0（3桁）÷5.0（2桁）=5.0（2桁）m/s'},
+  {t:'総合問題',q:'圧力 P = F/A。F = 100. N、A = 2.5 m² のとき P は？',f:'P = 100. ÷ 2.5',c:['40 Pa','40. Pa','40.0 Pa','4.0 Pa'],a:0,e:'100.（3桁）÷2.5（2桁）=40（2桁）Pa'},
+  {t:'総合問題',q:'濃度 c = n/V。n = 0.500 mol、V = 0.250 L のとき c は？',f:'c = 0.500 ÷ 0.250',c:['2 mol/L','2.0 mol/L','2.00 mol/L','2.000 mol/L'],a:2,e:'0.500（3桁）÷0.250（3桁）=2.00（3桁）mol/L'},
+  {t:'総合問題',q:'質量パーセント濃度 w = (溶質/溶液)×100。溶質 5.00 g、溶液 50.0 g のとき w は？',f:'w = (5.00 ÷ 50.0) × 100',c:['10 %','10.0 %','10.00 %','9.95 %'],a:1,e:'5.00÷50.0=0.100（3桁）。×100=10.0（3桁）%'},
+  {t:'総合問題',q:'次の計算の有効数字として正しいものは？',f:'(2.50 × 10⁻²) × (4.00 × 10³)',c:['100','1.00 × 10²','1.0 × 10²','100.0'],a:1,e:'2.50×4.00=10.0（3桁→1.00×10¹）、×10⁻²×10³=10¹ → 1.00 × 10²'},
+  {t:'総合問題',q:'光速 c=3.00×10⁸ m/s、振動数 ν=5.00×10¹⁴ Hz のとき波長 λ = c/ν は？',f:'λ = (3.00×10⁸) ÷ (5.00×10¹⁴)',c:['6.00 × 10⁻⁷ m','6.0 × 10⁻⁷ m','6.00 × 10⁻⁶ m','6.00 × 10⁻⁸ m'],a:0,e:'3.00÷5.00=0.600=6.00×10⁻¹、10⁸÷10¹⁴=10⁻⁶ → 6.00 × 10⁻⁷ m'},
+  {t:'総合問題',q:'ボイルの法則 P₁V₁=P₂V₂。P₁=1.00 atm、V₁=2.50 L、V₂=5.00 L のとき P₂ は？',f:'P₂ = (1.00 × 2.50) ÷ 5.00',c:['0.500 atm','0.50 atm','0.5 atm','0.5000 atm'],a:0,e:'1.00×2.50=2.50（3桁）÷5.00=0.500（3桁）atm'},
+  {t:'総合問題',q:'エネルギー E=hν。h=6.63×10⁻³⁴ J·s、ν=5.00×10¹⁴ Hz のとき E は？',f:'E = 6.63×10⁻³⁴ × 5.00×10¹⁴',c:['3.32 × 10⁻¹⁹ J','3.315 × 10⁻¹⁹ J','3.3 × 10⁻¹⁹ J','3.32 × 10⁻¹⁸ J'],a:0,e:'6.63×5.00=33.2（3桁）→3.32×10¹、×10⁻³⁴×10¹⁴×10¹=10⁻¹⁹ → 3.32 × 10⁻¹⁹ J'},
+],
+
+// ---- 段（初段〜五段）は前回と同じシンプルな問題を追加 ----
+d1:[
+  {t:'初段・化学応用',q:'モル質量 M=32.0 g/mol、質量 m=6.40 g のとき物質量 n は？',f:'n = 6.40 ÷ 32.0',c:['0.200 mol','0.20 mol','0.2 mol','2.00 mol'],a:0,e:'6.40（3桁）÷32.0（3桁）=0.200（3桁）mol'},
+  {t:'初段・化学応用',q:'濃度 c=1.50 mol/L、体積 V=0.250 L のとき物質量 n は？',f:'n = 1.50 × 0.250',c:['0.375 mol','0.38 mol','0.37 mol','3.75 mol'],a:0,e:'1.50（3桁）×0.250（3桁）=0.375（3桁）mol'},
+  {t:'初段・化学応用',q:'密度 d=0.789 g/cm³、体積 V=25.0 cm³ のとき質量 m は？',f:'m = 0.789 × 25.0',c:['19.7 g','19.8 g','19.725 g','20.0 g'],a:0,e:'0.789（3桁）×25.0（3桁）=19.725→3桁→19.7 g'},
+  {t:'初段・化学応用',q:'モル濃度 c=n/V。n=0.500 mol、V=250. mL=0.250 L のとき c は？',f:'c = 0.500 ÷ 0.250',c:['2.00 mol/L','2.0 mol/L','2 mol/L','0.200 mol/L'],a:0,e:'0.500（3桁）÷0.250（3桁）=2.00（3桁）mol/L'},
+  {t:'初段・化学応用',q:'質量パーセント濃度。溶質 5.00 g、溶液 50.0 g のとき濃度は？',f:'w = (5.00 ÷ 50.0) × 100',c:['10.0 %','10 %','10.00 %','9.95 %'],a:0,e:'5.00÷50.0=0.100（3桁）×100=10.0（3桁）%'},
+  {t:'初段・化学応用',q:'反応速度 v=Δ[A]/Δt。Δ[A]=0.120 mol/L、Δt=30.0 s のとき v は？',f:'v = 0.120 ÷ 30.0',c:['4.00 × 10⁻³','4.0 × 10⁻³','4.00 × 10⁻²','0.0040'],a:0,e:'0.120（3桁）÷30.0（3桁）=4.00×10⁻³（3桁）mol/(L·s)'},
+  {t:'初段・化学応用',q:'電荷量 Q=I×t。I=2.50 A、t=120. s のとき Q は？',f:'Q = 2.50 × 120.',c:['3.00 × 10² C','300. C','3.0 × 10² C','30.0 C'],a:0,e:'2.50（3桁）×120.（3桁）=300.→3桁→3.00 × 10² C'},
+  {t:'初段・化学応用',q:'アボガドロ定数 N_A=6.02×10²³、n=2.00 mol のとき分子数 N は？',f:'N = 2.00 × 6.02×10²³',c:['1.20 × 10²⁴','1.204 × 10²⁴','1.20 × 10²³','1.2 × 10²⁴'],a:0,e:'2.00×6.02=12.04→3桁→1.20×10¹、×10²³→1.20 × 10²⁴'},
+  {t:'初段・化学応用',q:'体積 V=4/3×π×r³、π=3.14、r=2.50 cm のとき V は？',f:'V = (4÷3) × 3.14 × (2.50)³',c:['65.4 cm³','65.4 cm³','65.4 cm³','65.5 cm³'],a:0,e:'2.50³=15.625、4÷3×3.14×15.625=65.4（3桁）cm³'},
+  {t:'初段・化学応用',q:'凝固点降下 ΔTf=Kf×m。Kf=1.86、m=0.250 mol/kg のとき ΔTf は？',f:'ΔTf = 1.86 × 0.250',c:['0.465 K','0.47 K','0.46 K','4.65 K'],a:0,e:'1.86（3桁）×0.250（3桁）=0.465（3桁）K'},
+],
+d2:[
+  {t:'二段・複数ステップ',q:'2段階計算 a=2.50×3.00、b=a÷5.0 のとき b は？',f:'b = (2.50 × 3.00) ÷ 5.0',c:['1.5','1.50','1.500','2.0'],a:0,e:'2.50×3.00=7.50（3桁）。7.50÷5.0=1.5（2桁）'},
+  {t:'二段・複数ステップ',q:'pH = -log[H⁺]。[H⁺]=1.0×10⁻³ mol/L のとき pH は？',f:'pH = -log(1.0×10⁻³)',c:['3','3.0','3.00','2.9'],a:1,e:'log(10⁻³)=−3.0（2桁）→ pH = 3.0'},
+  {t:'二段・複数ステップ',q:'希釈計算 c₁V₁=c₂V₂。c₁=2.00 mol/L、V₁=50.0 mL、V₂=200. mL のとき c₂ は？',f:'c₂ = (2.00 × 50.0) ÷ 200.',c:['0.500 mol/L','0.50 mol/L','0.5 mol/L','5.00 mol/L'],a:0,e:'2.00×50.0=100.（3桁）÷200.=0.500（3桁）mol/L'},
+  {t:'二段・複数ステップ',q:'浸透圧 π=MRT。M=0.100 mol/L、R=8.31、T=300. K のとき π は？',f:'π = 0.100 × 8.31 × 300.',c:['249 Pa','249.3 Pa','250 Pa','2490 Pa'],a:0,e:'0.100×8.31=0.831（3桁）×300.=249.3→3桁→249 Pa'},
+  {t:'二段・複数ステップ',q:'収率計算。理論収量=5.00 g、実際収量=4.15 g のとき収率は？',f:'収率 = (4.15 ÷ 5.00) × 100',c:['83.0 %','83 %','83.00 %','84 %'],a:0,e:'4.15÷5.00=0.830（3桁）×100=83.0（3桁）%'},
+  {t:'二段・複数ステップ',q:'エネルギー E=hν。h=6.63×10⁻³⁴ J·s、ν=5.00×10¹⁴ Hz のとき E は？',f:'E = 6.63×10⁻³⁴ × 5.00×10¹⁴',c:['3.32 × 10⁻¹⁹ J','3.315 × 10⁻¹⁹ J','3.3 × 10⁻¹⁹ J','3.32 × 10⁻¹⁸ J'],a:0,e:'6.63×5.00=33.15→3桁→33.2、×10⁻³⁴×10¹⁴=10⁻²⁰、33.2×10⁻²⁰=3.32×10⁻¹⁹ J'},
+  {t:'二段・複数ステップ',q:'ボイル-シャルルの法則で P₂を求めよ。P₁=2.00 atm、V₁=3.00 L、T₁=300. K、T₂=400. K、V₂=4.00 L',f:'P₂ = (2.00 × 3.00 × 400.) ÷ (300. × 4.00)',c:['2.00 atm','2.0 atm','1.99 atm','2.000 atm'],a:0,e:'分子:2.00×3.00×400.=2400（3桁）。分母:300.×4.00=1200（3桁）。2400÷1200=2.00（3桁）'},
+  {t:'二段・複数ステップ',q:'HCl: 0.100 mol/L × 20.0 mL のとき物質量（mmol）は？',f:'n = 0.100 × 20.0',c:['2.00 mmol','2.0 mmol','2 mmol','0.200 mmol'],a:0,e:'0.100（3桁）×20.0（3桁）=2.00（3桁）mmol'},
+],
+d3:[
+  {t:'三段・実験データ',q:'3回の測定値の平均を求めよ。測定値: 12.4、12.6、12.5 g',f:'平均 = (12.4+12.6+12.5) ÷ 3',c:['12.5 g','12.50 g','12 g','12.4 g'],a:0,e:'合計=37.5（小数1桁）。÷3=12.5（小数1桁）'},
+  {t:'三段・実験データ',q:'滴定: NaOH 0.1050 mol/L × 22.50 mL のとき HCl の物質量は？',f:'n = 0.1050 × 22.50 ÷ 1000',c:['2.363 × 10⁻³ mol','2.36 × 10⁻³ mol','2.362 × 10⁻³ mol','2.4 × 10⁻³ mol'],a:0,e:'0.1050（4桁）×22.50（4桁）=2.3625→4桁→2.363×10⁻³ mol'},
+  {t:'三段・実験データ',q:'希釈系列: 1.00 mol/L を10倍希釈3回繰り返した濃度は？',f:'c = 1.00 × (1/10)³',c:['1.00 × 10⁻³ mol/L','1.0 × 10⁻³ mol/L','0.001 mol/L','1.00 × 10⁻² mol/L'],a:0,e:'1.00×10⁻³ mol/L（3桁）'},
+  {t:'三段・実験データ',q:'気体の分子量。質量=0.250 g、体積=0.140 L（標準状態）のとき M は？（モル体積 22.4 L/mol）',f:'M = 0.250 × 22.4 ÷ 0.140',c:['40.0 g/mol','40 g/mol','39.9 g/mol','400 g/mol'],a:0,e:'0.250×22.4=5.60（3桁）÷0.140=40.0（3桁）g/mol'},
+  {t:'三段・実験データ',q:'反応熱。ΔT=3.50 K、m=100. g、c=4.18 J/(g·K) のとき熱量 q は？',f:'q = 4.18 × 100. × 3.50',c:['1.46 × 10³ J','1463 J','1.47 × 10³ J','1.46 × 10⁴ J'],a:0,e:'4.18（3桁）×100.（3桁）×3.50（3桁）=1463→3桁→1.46×10³ J'},
+  {t:'三段・実験データ',q:'酸素発生。H₂O₂ 5.00 g（M=34.0 g/mol）が完全分解したとき O₂ の体積は？（標準状態）',f:'V = (5.00÷34.0) × 0.5 × 22.4',c:['1.65 L','1.64 L','1.6 L','3.29 L'],a:0,e:'5.00÷34.0=0.147（3桁）×0.5=0.0735×22.4=1.65（3桁）L'},
+],
+d4:[
+  {t:'四段・高精度',q:'ヘスの法則: ΔH = −285.8 + (−393.5) − (−890.4) を計算せよ。',f:'ΔH = −285.8 − 393.5 + 890.4',c:['211.1 kJ','211.0 kJ','211.2 kJ','210.9 kJ'],a:0,e:'−285.8−393.5=−679.3（小数1桁）。+890.4=211.1（小数1桁）'},
+  {t:'四段・高精度',q:'平衡定数。[A]=0.200、[B]=0.150、[C]=0.300 のとき K=[C]²/([A][B]) は？',f:'K = (0.300)² ÷ (0.200 × 0.150)',c:['3.00','3.0','3.000','2.99'],a:0,e:'0.300²=0.0900、0.200×0.150=0.0300、0.0900÷0.0300=3.00（3桁）'},
+  {t:'四段・高精度',q:'ネルンスト方程式の一部 RT/F = (8.314 × 298) ÷ 96485 は？',f:'= (8.314 × 298) ÷ 96485',c:['0.02569 V','0.0257 V','0.02570 V','0.0256 V'],a:0,e:'8.314×298=2478（4桁）÷96485=0.02569（4桁）V'},
+  {t:'四段・高精度',q:'Ksp=1.8×10⁻¹⁰ の塩の溶解度 s = √Ksp は？',f:'s = √(1.8 × 10⁻¹⁰)',c:['1.3 × 10⁻⁵','1.34 × 10⁻⁵','1.3 × 10⁻⁵','1.34 × 10⁻⁴'],a:0,e:'√1.8=1.34→2桁(Kspが2桁)→1.3、√10⁻¹⁰=10⁻⁵ → 1.3 × 10⁻⁵ mol/L'},
+  {t:'四段・高精度',q:'核反応のエネルギー E=Δm×c²。Δm=3.20×10⁻²⁹ kg、c=3.00×10⁸ m/s のとき E は？',f:'E = 3.20×10⁻²⁹ × (3.00×10⁸)²',c:['2.88 × 10⁻¹² J','2.88 × 10⁻¹¹ J','2.88 × 10⁻¹³ J','2.9 × 10⁻¹² J'],a:0,e:'3.00²=9.00（3桁）、3.20×9.00=28.8（3桁）、×10⁻²⁹×10¹⁶=10⁻¹³、28.8×10⁻¹³=2.88×10⁻¹² J'},
+],
+d5:[
+  {t:'五段・最高難度',q:'カルノー効率 η=1−(Tc/Th)。Tc=300. K、Th=500. K のとき η は？',f:'η = 1 − (300. ÷ 500.)',c:['0.400','0.40','0.4','40.0 %'],a:0,e:'300.÷500.=0.600（3桁）。1−0.600=0.400（小数3桁）'},
+  {t:'五段・最高難度',q:'化学量論。2H₂+O₂→2H₂O の反応で H₂ 4.50 g と O₂ 32.0 g が反応。生成水の質量は？（M(H₂)=2.02、M(O₂)=32.0、M(H₂O)=18.0）',f:'H₂: 4.50÷2.02=2.23 mol、O₂: 32.0÷32.0=1.00 mol',c:['36.0 g','40.1 g','18.0 g','32.1 g'],a:0,e:'H₂:2.23mol、O₂:1.00mol。比2:1でO₂が限定。H₂O=2×1.00=2.00mol。2.00×18.0=36.0 g（3桁）'},
+  {t:'五段・最高難度',q:'電気化学 ΔG°=−nFE°。n=2.00、F=96485、E°=+1.10 V のとき ΔG° は？',f:'ΔG° = −2.00 × 96485 × 1.10',c:['−2.12 × 10⁵ J','−2.1 × 10⁵ J','−2.12 × 10⁴ J','−212 kJ'],a:0,e:'2.00×96485=192970（3桁→1.93×10⁵）×1.10=2.12×10⁵（3桁）'},
+  {t:'五段・最高難度',q:'de Broglie 波長 λ=h/mv。h=6.626×10⁻³⁴、m=9.109×10⁻³¹ kg、v=1.00×10⁶ m/s のとき λ は？',f:'λ = 6.626×10⁻³⁴ ÷ (9.109×10⁻³¹ × 1.00×10⁶)',c:['7.27 × 10⁻¹⁰ m','7.27 × 10⁻⁹ m','7.28 × 10⁻¹⁰ m','7.27 × 10⁻¹¹ m'],a:0,e:'9.109×1.00=9.109（4桁）×10⁻²⁵、6.626÷9.109=0.7274（4桁）→7.27×10⁻¹⁰ m'},
+  {t:'五段・最高難度',q:'熱力学 ΔG=ΔH−TΔS。ΔH=−128.4 kJ/mol、T=298 K、ΔS=−96.0 J/(mol·K) のとき ΔG は？',f:'ΔG = −128.4 − 298 × (−0.0960)',c:['−99.8 kJ/mol','−100 kJ/mol','−99.7 kJ/mol','−100.0 kJ/mol'],a:0,e:'298×0.0960=28.608→28.6（3桁）。−128.4+28.6=−99.8（小数1桁）kJ/mol'},
+],
+};
+
+// ===== STATE =====
+let playerName = '';
+let playerId = '';
+let currentLevel = null;
+let questions = [];
+let qi = 0, score = 0, correct = 0, combo = 0, maxCombo = 0;
+let timerInterval = null;
+let timeLeft = 30;
+let newEntryKey = null;
+
+// ===== PLAYER ID (端末ごとにユニーク) =====
+function getPlayerId(){
+  // Use a simple in-memory ID per session (no localStorage)
+  if(playerId) return playerId;
+  playerId = 'p_' + Date.now() + '_' + Math.random().toString(36).slice(2,7);
+  return playerId;
+}
+
+// ===== STORAGE HELPERS =====
+async function getRankingData(){
+  try{
+    const r = await window.storage.get('sfg-ranking-v2', true);
+    if(r && r.value) return JSON.parse(r.value);
+  }catch(e){}
+  return [];
+}
+async function setRankingData(data){
+  try{
+    await window.storage.set('sfg-ranking-v2', JSON.stringify(data), true);
+  }catch(e){ console.warn('storage error',e); }
+}
+async function getMyData(){
+  const key = 'sfg-my-' + getPlayerId();
+  try{
+    const r = await window.storage.get(key, false);
+    if(r && r.value) return JSON.parse(r.value);
+  }catch(e){}
+  return [];
+}
+async function setMyData(data){
+  const key = 'sfg-my-' + getPlayerId();
+  try{
+    await window.storage.set(key, JSON.stringify(data), false);
+  }catch(e){}
+}
+
+// ===== UI HELPERS =====
+function showScreen(id){
+  document.querySelectorAll('.screen').forEach(s=>s.classList.remove('active'));
+  document.getElementById(id).classList.add('active');
+  window.scrollTo(0,0);
+  if(id==='sc-ranking') loadRankingScreen();
+}
+
+// ===== NAME =====
+function saveName(){
+  const v = document.getElementById('inp-name').value.trim();
+  if(!v){ alert('名前を入力してください'); return; }
+  playerName = v;
+  document.getElementById('lv-player-name').textContent = '👤 ' + playerName;
+  initLevelGrid();
+  showScreen('sc-level');
+}
+
+// ===== LEVEL GRID =====
+function initLevelGrid(){
+  const g = document.getElementById('lv-grid');
+  g.innerHTML='';
+  LEVELS.forEach(lv=>{
+    const b = document.createElement('button');
+    b.className='lv-btn';
+    b.id='lvb-'+lv.id;
+    b.innerHTML=`<span class="lv-name">${lv.label}</span><span class="lv-diff">${lv.type==='dan'?'段位':'級位'}</span>`;
+    b.onclick=()=>selectLevel(lv);
+    g.appendChild(b);
+  });
+}
+
+function selectLevel(lv){
+  currentLevel=lv;
+  document.querySelectorAll('.lv-btn').forEach(b=>b.classList.remove('sel'));
+  document.getElementById('lvb-'+lv.id).classList.add('sel');
+  const d=document.getElementById('lv-desc');
+  d.style.display='block';
+  d.innerHTML=`<strong>${lv.label}</strong>：${lv.desc}`;
+  document.getElementById('lv-start-btn').disabled=false;
+}
+
+function goLesson(){
+  if(!currentLevel) return;
+  document.getElementById('lesson-lv-label').textContent=currentLevel.label+'の解説';
+  switchTab(1);
+  showScreen('sc-lesson');
+}
+
+// ===== LESSON TABS =====
+function switchTab(n){
+  for(let i=1;i<=3;i++){
+    document.getElementById('tab'+i).classList.toggle('active',i===n);
+    document.getElementById('tp'+i).classList.toggle('active',i===n);
+  }
+  window.scrollTo(0,0);
+}
+
+// ===== QUIZ =====
+function startQuiz(){
+  const bank = QB[currentLevel.qkey] || QB.lv10;
+  const shuffled=[...bank].sort(()=>Math.random()-.5).slice(0,10);
+  questions=shuffled;
+  qi=0; score=0; correct=0; combo=0; maxCombo=0;
+  document.getElementById('qtot').textContent=questions.length;
+  showScreen('sc-quiz');
+  renderQ();
+}
+
+function renderQ(){
+  const q=questions[qi];
+  document.getElementById('qn').textContent=qi+1;
+  document.getElementById('qscore').textContent=score;
+  document.getElementById('prog-fill').style.width=(qi/questions.length*100)+'%';
+  document.getElementById('qtype').textContent=q.t;
+  document.getElementById('qtext').textContent=q.q;
+  document.getElementById('qformula').textContent=q.f;
+  document.getElementById('qfeedback').className='feedback';
+  document.getElementById('qfeedback').textContent='';
+  document.getElementById('next-btn').style.display='none';
+  document.getElementById('combo-tag').innerHTML=combo>=2?`<span class="combo-tag">${combo}COMBO</span>`:'';
+
+  const cc=document.getElementById('qchoices');
+  cc.innerHTML='';
+  q.c.forEach((ch,i)=>{
+    const b=document.createElement('button');
+    b.className='choice';
+    b.textContent=ch;
+    b.onclick=()=>answer(i,b);
+    cc.appendChild(b);
+  });
+  startTimer();
+}
+
+function startTimer(){
+  clearInterval(timerInterval);
+  timeLeft=30;
+  document.getElementById('timer-fill').style.width='100%';
+  timerInterval=setInterval(()=>{
+    timeLeft-=.1;
+    document.getElementById('timer-fill').style.width=Math.max(0,(timeLeft/30*100))+'%';
+    if(timeLeft<=0){ clearInterval(timerInterval); timeUp(); }
+  },100);
+}
+
+function timeUp(){
+  combo=0;
+  const q=questions[qi];
+  document.querySelectorAll('.choice').forEach(b=>b.disabled=true);
+  document.querySelectorAll('.choice')[q.a].classList.add('ok');
+  const fb=document.getElementById('qfeedback');
+  fb.className='feedback ng';
+  fb.innerHTML=`⏰ 時間切れ！正解は <strong>${q.c[q.a]}</strong><br>💡 ${q.e}`;
+  document.getElementById('next-btn').style.display='block';
+  document.getElementById('combo-tag').innerHTML='';
+}
+
+function answer(idx,btn){
+  clearInterval(timerInterval);
+  const q=questions[qi];
+  document.querySelectorAll('.choice').forEach(b=>b.disabled=true);
+  const timePts=Math.round(timeLeft/30*40);
+  const fb=document.getElementById('qfeedback');
+
+  if(idx===q.a){
+    btn.classList.add('ok');
+    combo++; correct++;
+    if(combo>maxCombo) maxCombo=combo;
+    const comboPts=combo>=3?Math.min(50,20*(combo-2)):0;
+    const pts=100+timePts+comboPts;
+    score+=pts;
+    document.getElementById('qscore').textContent=score;
+    let msg=`✅ 正解！ +${pts}点`;
+    if(combo>=2) msg+=` 🔥 ${combo}コンボ！`;
+    fb.className='feedback ok';
+    fb.innerHTML=`${msg}<br>💡 ${q.e}`;
+    document.getElementById('combo-tag').innerHTML=combo>=2?`<span class="combo-tag">${combo}COMBO</span>`:'';
+  }else{
+    btn.classList.add('ng');
+    document.querySelectorAll('.choice')[q.a].classList.add('ok');
+    combo=0;
+    document.getElementById('combo-tag').innerHTML='';
+    fb.className='feedback ng';
+    fb.innerHTML=`❌ 不正解。正解は <strong>${q.c[q.a]}</strong><br>💡 ${q.e}`;
+  }
+  document.getElementById('next-btn').style.display='block';
+}
+
+function nextQ(){
+  qi++;
+  if(qi>=questions.length) endQuiz();
+  else renderQ();
+}
+
+// ===== END =====
+async function endQuiz(){
+  clearInterval(timerInterval);
+  const maxPts=questions.length*140;
+  const pct=score/maxPts;
+  let grade,gc,comment;
+  if(pct>=.9){grade='🏆 Sランク';gc='grade-s';comment='完璧！有効数字マスター！';}
+  else if(pct>=.75){grade='⭐ Aランク';gc='grade-a';comment='素晴らしい！あと少しで満点！';}
+  else if(pct>=.55){grade='✨ Bランク';gc='grade-b';comment='よくできました！苦手な部分を復習しよう。';}
+  else{grade='📚 Cランク';gc='grade-c';comment='もう一度解説を読んで練習しましょう！';}
+
+  document.getElementById('result-lv-label').textContent=currentLevel.label;
+  document.getElementById('grade-txt').innerHTML=`<span class="${gc}">${grade}</span>`;
+  document.getElementById('res-score').textContent=score;
+  document.getElementById('res-max').textContent=maxPts;
+  document.getElementById('res-comment').textContent=comment;
+  document.getElementById('res-correct').textContent=`正解 ${correct} / ${questions.length}問　最高コンボ: ${maxCombo}`;
+
+  // 自動でランキング登録
+  await registerScore();
+  showScreen('sc-result');
+}
+
+async function registerScore(){
+  const entry={
+    name: playerName,
+    pid: getPlayerId(),
+    score,
+    level: currentLevel.label,
+    type: currentLevel.type,
+    correct, total: questions.length, maxCombo,
+    date: new Date().toLocaleDateString('ja-JP'),
+    ts: Date.now(),
+  };
+
+  // 全体ランキング
+  const all = await getRankingData();
+  all.push(entry);
+  all.sort((a,b)=>b.score-a.score);
+  await setRankingData(all.slice(0,200)); // 最大200件保持
+
+  // 自分の記録
+  const mine = await getMyData();
+  mine.push({score, level: currentLevel.label, type: currentLevel.type, correct, total: questions.length, date: entry.date, ts: entry.ts});
+  mine.sort((a,b)=>b.score-a.score);
+  await setMyData(mine.slice(0,30));
+
+  newEntryKey = entry.ts;
+}
+
+// ===== RANKING SCREEN =====
+async function loadRankingScreen(){
+  // 自分の記録
+  const mine = await getMyData();
+  const myWrap = document.getElementById('my-records-wrap');
+  const myList = document.getElementById('my-record-list');
+
+  if(mine.length>0 && playerName){
+    myWrap.style.display='block';
+    // 自分の全体ランキングでの順位を計算
+    const all = await getRankingData();
+    myList.innerHTML='';
+    mine.slice(0,5).forEach(m=>{
+      // 全体での順位
+      const rank = all.findIndex(e=>e.score<=m.score && e.level===m.level)+1 || '−';
+      const li=document.createElement('li');
+      li.innerHTML=`
+        <span>${m.date} <span class="lv-tag">${m.level}</span></span>
+        <span class="my-rank-pos">
+          ${m.correct}/${m.total}問　<strong>${m.score}点</strong>
+        </span>
+      `;
+      myList.appendChild(li);
+    });
+  }else{
+    myWrap.style.display='none';
+  }
+
+  renderRankingList('all');
+}
+
+async function renderRankingList(filter){
+  const all = await getRankingData();
+  let filtered = filter==='kyu' ? all.filter(e=>e.type==='kyu')
+               : filter==='dan' ? all.filter(e=>e.type==='dan')
+               : all;
+  filtered = filtered.sort((a,b)=>b.score-a.score).slice(0,20);
+
+  const list = document.getElementById('rank-list');
+  if(filtered.length===0){
+    list.innerHTML='<li class="empty-rank">まだ記録がありません<br><small>プレイして一番乗りを目指そう！</small></li>';
+    return;
+  }
+  list.innerHTML='';
+  filtered.forEach((e,i)=>{
+    const rank=i+1;
+    const isNew = e.ts===newEntryKey;
+    const isMine = e.pid===getPlayerId();
+    const posClass=rank===1?'rank-item top1':rank===2?'rank-item top2':rank===3?'rank-item top3':'rank-item';
+    const mineClass=isMine?' mine':'';
+    const newClass=isNew?' new-in':'';
+    let posIcon=rank===1?'🥇':rank===2?'🥈':rank===3?'🥉':rank;
+    const li=document.createElement('li');
+    li.className=posClass+mineClass+newClass;
+    li.innerHTML=`
+      <span class="rank-pos ${rank===1?'p1':''}">${posIcon}</span>
+      <div class="rank-name">${isNew?'⭐ ':''}${isMine?'👤 ':''}${e.name}</div>
+      <div class="rank-right">
+        <div class="rank-score ${rank===1?'gold':''}">${e.score}</div>
+        <div class="rank-meta"><span class="lv-tag">${e.level}</span> ${e.correct}/${e.total}問 ${e.date}</div>
+      </div>
+    `;
+    list.appendChild(li);
+  });
+}
+
+function filterRank(f, btn){
+  document.querySelectorAll('.rfilter-btn').forEach(b=>b.classList.remove('active'));
+  btn.classList.add('active');
+  renderRankingList(f);
+}
+</script>
+</body>
+</html>
